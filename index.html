@@ -66,6 +66,8 @@
 
         .platform-link { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; color: #6b7280; }
         .platform-link:hover { color: #ffffff; transform: scale(1.1); }
+
+        .lang-btn { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
@@ -74,6 +76,88 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         const { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
+
+        // База переводов
+        const translations = {
+            RU: {
+                nav_features: "Возможности",
+                nav_performance: "Производительность",
+                nav_gallery: "Галерея",
+                nav_download: "Скачать",
+                hero_version: "ВЕРСИЯ 1.0.0 ОФИЦИАЛЬНО ВЫПУЩЕНА",
+                hero_subtitle: "Клиент нового поколения для DDNet.",
+                hero_desc: "Испытайте непревзойденную производительность, потрясающую визуализацию и тщательно продуманный интерфейс, созданный для будущего.",
+                btn_download: "Скачать сейчас",
+                btn_github: "Смотреть на GitHub",
+                btn_support: "Поддержать",
+                features_tag: "Возможности",
+                features_title: "Создан для совершенства.",
+                gallery_tag: "Галерея",
+                gallery_title: "Визуальный шедевр.",
+                perf_tag: "Производительность",
+                perf_title: "Несравненная эффективность.",
+                perf_desc: "Создан с нуля, чтобы ваша игра работала плавнее, чем когда-либо.",
+                stat1_label: "Кадров в секунду",
+                stat1_desc: "Невероятно плавный рендеринг",
+                stat2_label: "Использование памяти",
+                stat2_desc: "Невероятно легкий",
+                stat3_label: "Скорость запуска",
+                stat3_desc: "Мгновенный запуск",
+                download_title: "Готовы играть?",
+                download_desc: "Скачайте Mio Client сегодня и поднимите свой игровой опыт на новый уровень.",
+                download_for: "Скачать для",
+                download_wrong: "Не та ОС? Выберите вашу платформу:",
+                download_latest: "Последняя версия: 1.0.0 • 45.2 MB",
+                footer_copy: "© 2026 Mio Client. Все права защищены.",
+                feat: [
+                    { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'Красиво оформленный, интуитивно понятный интерфейс, позволяющий перемещаться по модулям и настройкам без труда.' },
+                    { icon: "fa-solid fa-bolt", title: 'Визуальные эффекты', desc: 'Расширьте границы игрового движка с помощью потрясающих, настраиваемых визуальных эффектов.' },
+                    { icon: "fa-solid fa-palette", title: 'Кастомизация', desc: 'Настройте каждый аспект клиента. От тем до биндов, сделайте Mio по-настоящему вашим до пикселя.' },
+                    { icon: "fa-solid fa-fire", title: 'Производительность', desc: 'Высокооптимизированная кодовая база, обеспечивающая максимальный FPS и минимальное потребление памяти даже на старых ПК.' },
+                    { icon: "fa-solid fa-gear", title: 'Современный UI', desc: 'Создан с использованием футуристического дизайна, предлагающий элегантный, стеклянный интерфейс.' },
+                    { icon: "fa-brands fa-osi", title: 'Open Source', desc: 'Полностью прозрачно и управляемо сообществом. Вносите вклад, изменяйте и учитесь на кодовой базе.' }
+                ]
+            },
+            EN: {
+                nav_features: "Features",
+                nav_performance: "Performance",
+                nav_gallery: "Gallery",
+                nav_download: "Download",
+                hero_version: "VERSION 1.0.0 OFFICIALLY RELEASED",
+                hero_subtitle: "The next generation DDNet client.",
+                hero_desc: "Experience unparalleled performance, stunning visuals, and a meticulously crafted interface designed for the future.",
+                btn_download: "Download Now",
+                btn_github: "View on GitHub",
+                btn_support: "Support",
+                features_tag: "Features",
+                features_title: "Built for perfection.",
+                gallery_tag: "Gallery",
+                gallery_title: "A visual masterpiece.",
+                perf_tag: "Performance",
+                perf_title: "Unrivaled efficiency.",
+                perf_desc: "Engineered from the ground up to ensure your game runs smoother than ever before.",
+                stat1_label: "Frames Per Second",
+                stat1_desc: "Buttery smooth rendering",
+                stat2_label: "Memory Usage",
+                stat2_desc: "Incredibly lightweight",
+                stat3_label: "Startup Speed",
+                stat3_desc: "Instantaneous launch",
+                download_title: "Ready to play?",
+                download_desc: "Download Mio Client today and elevate your gaming experience.",
+                download_for: "Download for",
+                download_wrong: "Wrong OS? Choose your platform:",
+                download_latest: "Latest Version: 1.0.0 • 45.2 MB",
+                footer_copy: "© 2026 Mio Client. All rights reserved.",
+                feat: [
+                    { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'A beautifully designed, intuitive interface that allows you to navigate modules and settings with zero friction.' },
+                    { icon: "fa-solid fa-bolt", title: 'Visual Effects', desc: 'Push the limits of the game engine with stunning, customizable visual enhancements and effects.' },
+                    { icon: "fa-solid fa-palette", title: 'Customization', desc: 'Tailor every aspect of the client. From themes to keybinds, make Mio truly yours down to the pixel.' },
+                    { icon: "fa-solid fa-fire", title: 'Performance', desc: 'Highly optimized codebase ensuring maximum FPS and minimal memory footprint, even on older machines.' },
+                    { icon: "fa-solid fa-gear", title: 'Modern UI', desc: 'Built with a futuristic design language, offering a sleek, glassmorphic experience that feels premium.' },
+                    { icon: "fa-brands fa-osi", title: 'Open Source', desc: 'Fully transparent and community-driven. Contribute, modify, and learn from a codebase built for the future.' }
+                ]
+            }
+        };
 
         const Counter = ({ value, suffix = '', decimals = 0 }) => {
             const ref = useRef(null);
@@ -118,6 +202,8 @@
         function App() {
             const [scrolled, setScrolled] = useState(false);
             const [userOS, setUserOS] = useState('Windows');
+            const [lang, setLang] = useState('EN');
+            const t = translations[lang];
             
             const heroX = useMotionValue(0); const heroY = useMotionValue(0);
             const heroXSpring = useSpring(heroX, { stiffness: 50, damping: 20 }); const heroYSpring = useSpring(heroY, { stiffness: 50, damping: 20 });
@@ -132,7 +218,6 @@
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
 
-            // Определение ОС (Windows, Mac, Linux, Android)
             useEffect(() => {
                 const platform = navigator.userAgent.toLowerCase();
                 if (platform.includes('mac')) setUserOS('macOS');
@@ -148,15 +233,6 @@
                 return 'fa-windows';
             };
 
-            const features = [
-                { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'A beautifully designed, intuitive interface that allows you to navigate modules and settings with zero friction.' },
-                { icon: "fa-solid fa-bolt", title: 'Visual Effects', desc: 'Push the limits of the game engine with stunning, customizable visual enhancements and effects.' },
-                { icon: "fa-solid fa-palette", title: 'Customization', desc: 'Tailor every aspect of the client. From themes to keybinds, make Mio truly yours down to the pixel.' },
-                { icon: "fa-solid fa-fire", title: 'Performance', desc: 'Highly optimized codebase ensuring maximum FPS and minimal memory footprint, even on older machines.' },
-                { icon: "fa-solid fa-gear", title: 'Modern UI', desc: 'Built with a futuristic design language, offering a sleek, glassmorphic experience that feels premium.' },
-                { icon: "fa-brands fa-osi", title: 'Open Source', desc: 'Fully transparent and community-driven. Contribute, modify, and learn from a codebase built for the future.' }
-            ];
-
             return (
                 <div className="relative min-h-screen bg-mio-bg text-white overflow-hidden" onMouseMove={handleHeroMouseMove}>
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
@@ -165,22 +241,56 @@
                         <div className="absolute bottom-[-10%] left-[30%] w-[600px] h-[600px] bg-purple-700/10 rounded-full filter blur-[120px] animate-blob"></div>
                     </div>
 
-                    <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[90%] md:w-[60%] py-2' : 'w-[95%] md:w-[80%] py-3'}`}>
-                        <div className={`flex items-center justify-between px-6 rounded-full border border-mio-border bg-mio-bg/70 backdrop-blur-xl ${scrolled ? 'shadow-[0_8px_30px_rgb(0,0,0,0.5)]' : ''}`}>
-                            <div className="text-lg font-bold tracking-wider"><span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span></div>
-                            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
-                                <a href="#features" className="hover:text-white transition-colors">Features</a>
-                                <a href="#performance" className="hover:text-white transition-colors">Performance</a>
-                                <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-                                <a href="#download" className="hover:text-white transition-colors">Download</a>
+                    {/* Основной навбар */}
+                    <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[95%] md:max-w-[900px] py-2' : 'w-[95%] md:max-w-[900px] py-3'}`}>
+                        <div className={`flex items-center justify-between px-4 sm:px-6 rounded-full border border-mio-border bg-mio-bg/70 backdrop-blur-xl ${scrolled ? 'shadow-[0_8px_30px_rgb(0,0,0,0.5)]' : ''}`}>
+                            
+                            {/* Левая часть: Лого + Ссылки (сгруппированы) */}
+                            <div className="flex items-center gap-4 md:gap-8 lg:gap-10 whitespace-nowrap">
+                                <div className="text-base md:text-lg font-bold tracking-wider">
+                                    <span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span>
+                                </div>
+                                
+                                {/* Ссылки навигации (теперь рядом с лого) */}
+                                <div className="hidden md:flex items-center gap-4 md:gap-5 lg:gap-6 text-xs md:text-sm font-medium text-gray-400">
+                                    <a href="#features" className="hover:text-white transition-colors">{t.nav_features}</a>
+                                    <a href="#performance" className="hover:text-white transition-colors">{t.nav_performance}</a>
+                                    <a href="#gallery" className="hover:text-white transition-colors">{t.nav_gallery}</a>
+                                    <a href="#download" className="hover:text-white transition-colors">{t.nav_download}</a>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-4">
+                            
+                            {/* Правая часть: Соцсети */}
+                            <div className="flex items-center gap-3 md:gap-4 whitespace-nowrap">
                                 <a href="https://t.me/ddnetsam" target="_blank" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-telegram"></i></a>
                                 <a href="#" target="_blank" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-discord"></i></a>
                                 <a href="#" target="_blank" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-github"></i></a>
                             </div>
                         </div>
                     </motion.nav>
+
+                    {/* Плашка переключения языка в правом углу */}
+                    <motion.div 
+                        initial={{ y: -50, opacity: 0 }} 
+                        animate={{ y: 0, opacity: 1 }} 
+                        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        className="fixed top-[80px] right-4 md:right-6 z-40"
+                    >
+                        <div className="flex items-center gap-1 bg-mio-card border border-mio-border rounded-full p-1 shadow-[0_4px_20px_rgb(0,0,0,0.4)] backdrop-blur-sm">
+                            <button 
+                                onClick={() => setLang('RU')} 
+                                className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === 'RU' ? 'bg-mio-primary text-white shadow-[0_0_15px_rgba(180,125,255,0.5)]' : 'text-gray-400 hover:text-white'}`}
+                            >
+                                RU
+                            </button>
+                            <button 
+                                onClick={() => setLang('EN')} 
+                                className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === 'EN' ? 'bg-mio-primary text-white shadow-[0_0_15px_rgba(180,125,255,0.5)]' : 'text-gray-400 hover:text-white'}`}
+                            >
+                                EN
+                            </button>
+                        </div>
+                    </motion.div>
 
                     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 z-10">
                         <motion.div style={{ x: heroXSpring, y: heroYSpring }} className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none">
@@ -195,14 +305,14 @@
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="mb-8">
                                 <img src="Icon.png" alt="Mio Client Logo" className="w-28 h-28 rounded-2xl mx-auto border border-mio-border shadow-[0_0_50px_rgba(180,125,255,0.3)]" />
                             </motion.div>
-                            <div className="inline-block px-4 py-1.5 mb-8 rounded-full border border-mio-border bg-mio-card/50 backdrop-blur-sm text-xs font-medium text-gray-300 tracking-wide">VERSION 1.0.0 OFFICIALLY RELEASED</div>
+                            <div className="inline-block px-4 py-1.5 mb-8 rounded-full border border-mio-border bg-mio-card/50 backdrop-blur-sm text-xs font-medium text-gray-300 tracking-wide">{t.hero_version}</div>
                             <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-6 leading-none interactive-text"><span className="text-white">Mio</span>{" "}<span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent">Client</span></h1>
-                            <h2 className="text-2xl md:text-3xl font-light text-gray-300 mb-4 tracking-tight interactive-text">The next generation DDNet client.</h2>
-                            <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">Experience unparalleled performance, stunning visuals, and a meticulously crafted interface designed for the future.</p>
+                            <h2 className="text-2xl md:text-3xl font-light text-gray-300 mb-4 tracking-tight interactive-text">{t.hero_subtitle}</h2>
+                            <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{t.hero_desc}</p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <a href="#download" className="relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-transform duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(180,125,255,0.4)]"><i className="fa-solid fa-download"></i> Download Now</a>
-                                <a href="#" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-brands fa-github"></i> View on GitHub</a>
-                                <a href="https://dalink.to/samporter" target="_blank" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-solid fa-heart text-mio-secondary"></i> Support</a>
+                                <a href="#download" className="relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-transform duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(180,125,255,0.4)]"><i className="fa-solid fa-download"></i> {t.btn_download}</a>
+                                <a href="#" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-brands fa-github"></i> {t.btn_github}</a>
+                                <a href="https://dalink.to/samporter" target="_blank" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-solid fa-heart text-mio-secondary"></i> {t.btn_support}</a>
                             </div>
                         </motion.div>
                     </section>
@@ -210,18 +320,18 @@
                     <section id="features" className="relative py-32 px-6 z-10">
                         <div className="max-w-7xl mx-auto">
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
-                                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">Features</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">Built for perfection.</h2>
+                                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">{t.features_tag}</p>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">{t.features_title}</h2>
                             </motion.div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{features.map((feature, i) => (<FeatureCard key={i} {...feature} index={i} />))}</div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{t.feat.map((feature, i) => (<FeatureCard key={i} {...feature} index={i} />))}</div>
                         </div>
                     </section>
 
                     <section id="gallery" className="relative py-32 z-10">
                         <div className="max-w-7xl mx-auto px-6 mb-12">
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-                                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">Gallery</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">A visual masterpiece.</h2>
+                                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">{t.gallery_tag}</p>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">{t.gallery_title}</h2>
                             </motion.div>
                         </div>
                         <div className="flex gap-6 overflow-x-auto px-6 pb-6 snap-x snap-mandatory">
@@ -241,12 +351,16 @@
                     <section id="performance" className="relative py-32 px-6 z-10">
                         <div className="max-w-6xl mx-auto">
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-20">
-                                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">Performance</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">Unrivaled efficiency.</h2>
-                                <p className="text-gray-500 max-w-2xl mx-auto mt-4 font-light text-lg">Engineered from the ground up to ensure your game runs smoother than ever before.</p>
+                                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">{t.perf_tag}</p>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">{t.perf_title}</h2>
+                                <p className="text-gray-500 max-w-2xl mx-auto mt-4 font-light text-lg">{t.perf_desc}</p>
                             </motion.div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {[{ value: 360, suffix: '+', label: 'Frames Per Second', desc: 'Buttery smooth rendering' }, { value: 45, suffix: 'MB', label: 'Memory Usage', desc: 'Incredibly lightweight' }, { value: 0.8, suffix: 's', label: 'Startup Speed', decimals: 1, desc: 'Instantaneous launch' }].map((stat, i) => (
+                                {[
+                                    { value: 360, suffix: '+', label: t.stat1_label, desc: t.stat1_desc },
+                                    { value: 45, suffix: 'MB', label: t.stat2_label, desc: t.stat2_desc },
+                                    { value: 0.8, suffix: 's', label: t.stat3_label, desc: t.stat3_desc, decimals: 1 }
+                                ].map((stat, i) => (
                                     <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }} className="relative p-10 rounded-2xl border border-mio-border bg-mio-card/50 backdrop-blur-sm text-center overflow-hidden">
                                         <div className="absolute -top-20 -left-20 w-40 h-40 bg-mio-primary/20 rounded-full filter blur-3xl"></div>
                                         <div className="relative z-10">
@@ -264,22 +378,22 @@
                         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-mio-primary to-mio-secondary blur-3xl opacity-20 rounded-full"></div>
                             <div className="relative z-10">
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">Ready to play?</h2>
-                                <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">Download Mio Client today and elevate your gaming experience.</p>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">{t.download_title}</h2>
+                                <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{t.download_desc}</p>
                                 
                                 <a href="./downloads/MioClient-Windows.zip" className="relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(180,125,255,0.6)]">
-                                    <i className={`fa-brands ${getOSIcon(userOS)}`}></i> Download for {userOS}
+                                    <i className={`fa-brands ${getOSIcon(userOS)}`}></i> {t.download_for} {userOS}
                                 </a>
 
                                 <div className="flex flex-col items-center gap-3 text-gray-400">
-                                    <p className="text-sm text-gray-500">Wrong OS? Choose your platform:</p>
+                                    <p className="text-sm text-gray-500">{t.download_wrong}</p>
                                     <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-lg font-medium">
                                         <a href="./downloads/MioClient-Windows.zip" className="platform-link"><i className="fa-brands fa-windows"></i> Windows</a>
                                         <a href="./downloads/MioClient-macOS.zip" className="platform-link"><i className="fa-brands fa-apple"></i> macOS</a>
                                         <a href="./downloads/MioClient-Linux.zip" className="platform-link"><i className="fa-brands fa-linux"></i> Linux</a>
                                         <a href="./downloads/MioClient-Android.apk" className="platform-link"><i className="fa-brands fa-android"></i> Android</a>
                                     </div>
-                                    <p className="text-sm text-gray-600 mt-4">Latest Version: 1.0.0 • 45.2 MB</p>
+                                    <p className="text-sm text-gray-600 mt-4">{t.download_latest}</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -294,7 +408,7 @@
                                 <a href="#" target="_blank" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-github"></i></a>
                                 <a href="https://dalink.to/samporter" target="_blank" className="hover:text-mio-secondary transition-colors"><i className="fa-solid fa-heart"></i></a>
                             </div>
-                            <p className="text-sm text-gray-600">© 2026 Mio Client. All rights reserved.</p>
+                            <p className="text-sm text-gray-600">{t.footer_copy}</p>
                         </div>
                     </footer>
                 </div>
