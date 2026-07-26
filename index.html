@@ -33,9 +33,7 @@
                         'mio-primary': '#b47dff',
                         'mio-secondary': '#ff4d88',
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     animation: {
                         'blob': 'blob 12s infinite cubic-bezier(0.4, 0, 0.2, 1)',
                         'float-slow': 'float 8s infinite ease-in-out',
@@ -63,29 +61,11 @@
         ::-webkit-scrollbar-thumb { background: #b47dff40; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #b47dff80; }
         
-        /* Интерактивные заголовки (свечение) */
-        .interactive-text {
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        .interactive-text:hover {
-            transform: scale(1.02);
-            text-shadow: 0 0 40px rgba(180, 125, 255, 0.5);
-            cursor: default;
-        }
+        .interactive-text { transition: all 0.3s ease; display: inline-block; }
+        .interactive-text:hover { transform: scale(1.02); text-shadow: 0 0 40px rgba(180, 125, 255, 0.5); cursor: default; }
 
-        /* Кнопки платформ */
-        .platform-link {
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #6b7280;
-        }
-        .platform-link:hover {
-            color: #ffffff;
-            transform: scale(1.1);
-        }
+        .platform-link { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; color: #6b7280; }
+        .platform-link:hover { color: #ffffff; transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -95,69 +75,40 @@
         const { useState, useEffect, useRef } = React;
         const { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
 
-        // Анимированный счетчик
         const Counter = ({ value, suffix = '', decimals = 0 }) => {
             const ref = useRef(null);
             const isInView = useInView(ref, { once: true });
             const [displayValue, setDisplayValue] = useState(0);
-
             useEffect(() => {
                 if (isInView) {
-                    const duration = 2000;
-                    const start = Date.now();
+                    const duration = 2000; const start = Date.now();
                     const animate = () => {
                         const elapsed = Date.now() - start;
                         const progress = Math.min(elapsed / duration, 1);
-                        const current = progress * value;
-                        setDisplayValue(current.toFixed(decimals));
+                        setDisplayValue((progress * value).toFixed(decimals));
                         if (progress < 1) requestAnimationFrame(animate);
                     };
                     requestAnimationFrame(animate);
                 }
             }, [isInView, value, decimals]);
-
             return <span ref={ref}>{displayValue}{suffix}</span>;
         };
 
-        // 3D Карточка
         const FeatureCard = ({ icon, title, desc, index }) => {
             const ref = useRef(null);
-            const mouseX = useMotionValue(0);
-            const mouseY = useMotionValue(0);
-
+            const mouseX = useMotionValue(0); const mouseY = useMotionValue(0);
             const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], ['7deg', '-7deg']), { stiffness: 150, damping: 20 });
             const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], ['-7deg', '7deg']), { stiffness: 150, damping: 20 });
-
             const handleMouseMove = (e) => {
                 const rect = ref.current.getBoundingClientRect();
-                const xPct = (e.clientX - rect.left) / rect.width - 0.5;
-                const yPct = (e.clientY - rect.top) / rect.height - 0.5;
-                mouseX.set(xPct);
-                mouseY.set(yPct);
+                mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+                mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
             };
-
-            const handleMouseLeave = () => {
-                mouseX.set(0);
-                mouseY.set(0);
-            };
-
+            const handleMouseLeave = () => { mouseX.set(0); mouseY.set(0); };
             return (
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    ref={ref}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-                    className="group relative bg-mio-card border border-mio-border rounded-2xl p-8 transition-colors duration-300 hover:border-mio-primary/40"
-                >
+                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: index * 0.1 }} ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }} className="group relative bg-mio-card border border-mio-border rounded-2xl p-8 transition-colors duration-300 hover:border-mio-primary/40">
                     <div className="absolute -inset-px bg-gradient-to-r from-mio-primary to-mio-secondary rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10"></div>
-                    
-                    <div className="mb-5 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-mio-primary/20 to-mio-secondary/20 border border-mio-border text-mio-primary text-2xl" style={{ transform: 'translateZ(40px)' }}>
-                        <i className={icon}></i>
-                    </div>
+                    <div className="mb-5 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-mio-primary/20 to-mio-secondary/20 border border-mio-border text-mio-primary text-2xl" style={{ transform: 'translateZ(40px)' }}><i className={icon}></i></div>
                     <h3 className="text-xl font-semibold mb-2 text-white" style={{ transform: 'translateZ(30px)' }}>{title}</h3>
                     <p className="text-gray-400 font-light leading-relaxed" style={{ transform: 'translateZ(20px)' }}>{desc}</p>
                 </motion.div>
@@ -168,15 +119,11 @@
             const [scrolled, setScrolled] = useState(false);
             const [userOS, setUserOS] = useState('Windows');
             
-            const heroX = useMotionValue(0);
-            const heroY = useMotionValue(0);
-            const heroXSpring = useSpring(heroX, { stiffness: 50, damping: 20 });
-            const heroYSpring = useSpring(heroY, { stiffness: 50, damping: 20 });
-
+            const heroX = useMotionValue(0); const heroY = useMotionValue(0);
+            const heroXSpring = useSpring(heroX, { stiffness: 50, damping: 20 }); const heroYSpring = useSpring(heroY, { stiffness: 50, damping: 20 });
             const handleHeroMouseMove = (e) => {
-                const { clientX, clientY, innerWidth, innerHeight } = e;
-                heroX.set((clientX / innerWidth - 0.5) * 40);
-                heroY.set((clientY / innerHeight - 0.5) * 40);
+                heroX.set((e.clientX / window.innerWidth - 0.5) * 40);
+                heroY.set((e.clientY / window.innerHeight - 0.5) * 40);
             };
 
             useEffect(() => {
@@ -185,15 +132,21 @@
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
 
-            // Определение ОС пользователя
+            // Определение ОС (Windows, Mac, Linux, Android)
             useEffect(() => {
                 const platform = navigator.userAgent.toLowerCase();
-                if (platform.includes('linux')) {
-                    setUserOS('Linux');
-                } else {
-                    setUserOS('Windows');
-                }
+                if (platform.includes('mac')) setUserOS('macOS');
+                else if (platform.includes('android')) setUserOS('Android');
+                else if (platform.includes('linux')) setUserOS('Linux');
+                else setUserOS('Windows');
             }, []);
+
+            const getOSIcon = (os) => {
+                if (os === 'macOS') return 'fa-apple';
+                if (os === 'Android') return 'fa-android';
+                if (os === 'Linux') return 'fa-linux';
+                return 'fa-windows';
+            };
 
             const features = [
                 { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'A beautifully designed, intuitive interface that allows you to navigate modules and settings with zero friction.' },
@@ -206,24 +159,15 @@
 
             return (
                 <div className="relative min-h-screen bg-mio-bg text-white overflow-hidden" onMouseMove={handleHeroMouseMove}>
-                    
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
                         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-mio-primary/20 rounded-full filter blur-[120px] animate-blob"></div>
                         <div className="absolute top-[30%] right-[-10%] w-[400px] h-[400px] bg-mio-secondary/20 rounded-full filter blur-[120px] animate-blob"></div>
                         <div className="absolute bottom-[-10%] left-[30%] w-[600px] h-[600px] bg-purple-700/10 rounded-full filter blur-[120px] animate-blob"></div>
                     </div>
 
-                    <motion.nav 
-                        initial={{ y: -100, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[90%] md:w-[60%] py-2' : 'w-[95%] md:w-[80%] py-3'}`}
-                    >
+                    <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[90%] md:w-[60%] py-2' : 'w-[95%] md:w-[80%] py-3'}`}>
                         <div className={`flex items-center justify-between px-6 rounded-full border border-mio-border bg-mio-bg/70 backdrop-blur-xl ${scrolled ? 'shadow-[0_8px_30px_rgb(0,0,0,0.5)]' : ''}`}>
-                            <div className="text-lg font-bold tracking-wider">
-                                <span className="text-white">Mio</span>
-                                <span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span>
-                            </div>
+                            <div className="text-lg font-bold tracking-wider"><span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span></div>
                             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                                 <a href="#features" className="hover:text-white transition-colors">Features</a>
                                 <a href="#performance" className="hover:text-white transition-colors">Performance</a>
@@ -239,129 +183,50 @@
                     </motion.nav>
 
                     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 z-10">
-                        <motion.div 
-                            style={{ x: heroXSpring, y: heroYSpring }}
-                            className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none"
-                        >
+                        <motion.div style={{ x: heroXSpring, y: heroYSpring }} className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none">
                             <div className="absolute top-[20%] left-[20%] w-32 h-32 border border-mio-primary/30 rounded-3xl rotate-12 backdrop-blur-sm animate-float-slow bg-mio-primary/5"></div>
                             <div className="absolute bottom-[25%] right-[15%] w-24 h-24 border border-mio-secondary/30 rounded-full backdrop-blur-sm animate-float-slow bg-mio-secondary/5"></div>
                             <div className="absolute top-[30%] right-[25%] w-16 h-16 border border-white/10 rotate-45 backdrop-blur-sm animate-float-slow"></div>
                         </motion.div>
-
                         {[...Array(15)].map((_, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: [0, 1, 0], y: [0, -100] }}
-                                transition={{ duration: 3 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 5 }}
-                                className="absolute w-1 h-1 bg-white rounded-full"
-                                style={{ left: `${Math.random() * 100}%`, bottom: `${Math.random() * 100}%` }}
-                            />
+                            <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0], y: [0, -100] }} transition={{ duration: 3 + Math.random() * 5, repeat: Infinity, delay: Math.random() * 5 }} className="absolute w-1 h-1 bg-white rounded-full" style={{ left: `${Math.random() * 100}%`, bottom: `${Math.random() * 100}%` }} />
                         ))}
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, delay: 0.2 }}
-                            className="text-center max-w-4xl"
-                        >
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.8 }}
-                                className="mb-8"
-                            >
+                        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} className="text-center max-w-4xl">
+                            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="mb-8">
                                 <img src="Icon.png" alt="Mio Client Logo" className="w-28 h-28 rounded-2xl mx-auto border border-mio-border shadow-[0_0_50px_rgba(180,125,255,0.3)]" />
                             </motion.div>
-
-                            <div className="inline-block px-4 py-1.5 mb-8 rounded-full border border-mio-border bg-mio-card/50 backdrop-blur-sm text-xs font-medium text-gray-300 tracking-wide">
-                                VERSION 1.0.0 OFFICIALLY RELEASED
-                            </div>
-                            
-                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-6 leading-none interactive-text">
-                                <span className="text-white">Mio</span>{" "}
-                                <span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent">Client</span>
-                            </h1>
-                            
-                            <h2 className="text-2xl md:text-3xl font-light text-gray-300 mb-4 tracking-tight interactive-text">
-                                The next generation DDNet client.
-                            </h2>
-                            
-                            <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">
-                                Experience unparalleled performance, stunning visuals, and a meticulously crafted interface designed for the future.
-                            </p>
-
+                            <div className="inline-block px-4 py-1.5 mb-8 rounded-full border border-mio-border bg-mio-card/50 backdrop-blur-sm text-xs font-medium text-gray-300 tracking-wide">VERSION 1.0.0 OFFICIALLY RELEASED</div>
+                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter mb-6 leading-none interactive-text"><span className="text-white">Mio</span>{" "}<span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent">Client</span></h1>
+                            <h2 className="text-2xl md:text-3xl font-light text-gray-300 mb-4 tracking-tight interactive-text">The next generation DDNet client.</h2>
+                            <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">Experience unparalleled performance, stunning visuals, and a meticulously crafted interface designed for the future.</p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <a
-                                    href="#download"
-                                    className="relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-transform duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(180,125,255,0.4)]"
-                                >
-                                    <i className="fa-solid fa-download"></i> Download Now
-                                </a>
-                                <a
-                                    href="#"
-                                    className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"
-                                >
-                                    <i className="fa-brands fa-github"></i> View on GitHub
-                                </a>
-                                <a
-                                    href="https://dalink.to/samporter"
-                                    target="_blank"
-                                    className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"
-                                >
-                                    <i className="fa-solid fa-heart text-mio-secondary"></i> Support
-                                </a>
+                                <a href="#download" className="relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-transform duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(180,125,255,0.4)]"><i className="fa-solid fa-download"></i> Download Now</a>
+                                <a href="#" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-brands fa-github"></i> View on GitHub</a>
+                                <a href="https://dalink.to/samporter" target="_blank" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/50 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-solid fa-heart text-mio-secondary"></i> Support</a>
                             </div>
                         </motion.div>
                     </section>
 
                     <section id="features" className="relative py-32 px-6 z-10">
                         <div className="max-w-7xl mx-auto">
-                            <motion.div 
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6 }}
-                                className="text-center mb-16"
-                            >
+                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
                                 <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">Features</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">
-                                    Built for perfection.
-                                </h2>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">Built for perfection.</h2>
                             </motion.div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {features.map((feature, i) => (
-                                    <FeatureCard key={i} {...feature} index={i} />
-                                ))}
-                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{features.map((feature, i) => (<FeatureCard key={i} {...feature} index={i} />))}</div>
                         </div>
                     </section>
 
-                    {/* Галерея (Нативный слайдер) */}
                     <section id="gallery" className="relative py-32 z-10">
                         <div className="max-w-7xl mx-auto px-6 mb-12">
-                            <motion.div 
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6 }}
-                                className="text-center"
-                            >
+                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
                                 <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">Gallery</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">
-                                    A visual masterpiece.
-                                </h2>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">A visual masterpiece.</h2>
                             </motion.div>
                         </div>
-
-                        {/* Можно листать колесиком мыши или свайпать (появится скроллбар) */}
                         <div className="flex gap-6 overflow-x-auto px-6 pb-6 snap-x snap-mandatory">
                             {[1, 2, 3, 4, 5].map((item) => (
-                                <div
-                                    key={item}
-                                    className="relative flex-shrink-0 w-[90%] md:w-[700px] snap-center group"
-                                >
+                                <div key={item} className="relative flex-shrink-0 w-[90%] md:w-[700px] snap-center group">
                                     <div className="relative rounded-2xl overflow-hidden border border-mio-border bg-mio-card/50 backdrop-blur-sm h-[400px] transition-all duration-300 group-hover:border-mio-primary/40">
                                         <div className="absolute inset-0 bg-gradient-to-br from-mio-primary/10 to-mio-secondary/10 z-10 pointer-events-none"></div>
                                         <div className="h-full w-full flex items-center justify-center relative overflow-hidden">
@@ -375,39 +240,17 @@
 
                     <section id="performance" className="relative py-32 px-6 z-10">
                         <div className="max-w-6xl mx-auto">
-                            <motion.div 
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6 }}
-                                className="text-center mb-20"
-                            >
+                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-20">
                                 <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm">Performance</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">
-                                    Unrivaled efficiency.
-                                </h2>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">Unrivaled efficiency.</h2>
                                 <p className="text-gray-500 max-w-2xl mx-auto mt-4 font-light text-lg">Engineered from the ground up to ensure your game runs smoother than ever before.</p>
                             </motion.div>
-
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {[
-                                    { value: 360, suffix: '+', label: 'Frames Per Second', desc: 'Buttery smooth rendering' },
-                                    { value: 45, suffix: 'MB', label: 'Memory Usage', desc: 'Incredibly lightweight' },
-                                    { value: 0.8, suffix: 's', label: 'Startup Speed', decimals: 1, desc: 'Instantaneous launch' }
-                                ].map((stat, i) => (
-                                    <motion.div 
-                                        key={i}
-                                        initial={{ opacity: 0, y: 30 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.6, delay: i * 0.15 }}
-                                        className="relative p-10 rounded-2xl border border-mio-border bg-mio-card/50 backdrop-blur-sm text-center overflow-hidden"
-                                    >
+                                {[{ value: 360, suffix: '+', label: 'Frames Per Second', desc: 'Buttery smooth rendering' }, { value: 45, suffix: 'MB', label: 'Memory Usage', desc: 'Incredibly lightweight' }, { value: 0.8, suffix: 's', label: 'Startup Speed', decimals: 1, desc: 'Instantaneous launch' }].map((stat, i) => (
+                                    <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }} className="relative p-10 rounded-2xl border border-mio-border bg-mio-card/50 backdrop-blur-sm text-center overflow-hidden">
                                         <div className="absolute -top-20 -left-20 w-40 h-40 bg-mio-primary/20 rounded-full filter blur-3xl"></div>
                                         <div className="relative z-10">
-                                            <h3 className="text-5xl md:text-6xl font-extrabold mb-2 tracking-tighter bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
-                                                <Counter value={stat.value} suffix={stat.suffix} decimals={stat.decimals || 0} />
-                                            </h3>
+                                            <h3 className="text-5xl md:text-6xl font-extrabold mb-2 tracking-tighter bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent"><Counter value={stat.value} suffix={stat.suffix} decimals={stat.decimals || 0} /></h3>
                                             <p className="text-xl font-medium text-white mb-1">{stat.label}</p>
                                             <p className="text-gray-500 font-light">{stat.desc}</p>
                                         </div>
@@ -418,38 +261,23 @@
                     </section>
 
                     <section id="download" className="relative py-32 px-6 z-10 flex flex-col items-center justify-center text-center">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8 }}
-                            className="relative"
-                        >
+                        <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-mio-primary to-mio-secondary blur-3xl opacity-20 rounded-full"></div>
-                            
                             <div className="relative z-10">
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">
-                                    Ready to play?
-                                </h2>
+                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">Ready to play?</h2>
                                 <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">Download Mio Client today and elevate your gaming experience.</p>
                                 
-                                <a
-                                    href="#"
-                                    className="relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(180,125,255,0.6)]"
-                                >
-                                    <i className={`fa-brands ${userOS === 'Linux' ? 'fa-linux' : 'fa-windows'}`}></i> 
-                                    Download for {userOS}
+                                <a href="./downloads/MioClient-Windows.zip" className="relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(180,125,255,0.6)]">
+                                    <i className={`fa-brands ${getOSIcon(userOS)}`}></i> Download for {userOS}
                                 </a>
 
                                 <div className="flex flex-col items-center gap-3 text-gray-400">
                                     <p className="text-sm text-gray-500">Wrong OS? Choose your platform:</p>
-                                    <div className="flex gap-8 text-lg font-medium">
-                                        <a href="#" className="platform-link">
-                                            <i className="fa-brands fa-windows"></i> Windows
-                                        </a>
-                                        <a href="#" className="platform-link">
-                                            <i className="fa-brands fa-linux"></i> Linux
-                                        </a>
+                                    <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-lg font-medium">
+                                        <a href="./downloads/MioClient-Windows.zip" className="platform-link"><i className="fa-brands fa-windows"></i> Windows</a>
+                                        <a href="./downloads/MioClient-macOS.zip" className="platform-link"><i className="fa-brands fa-apple"></i> macOS</a>
+                                        <a href="./downloads/MioClient-Linux.zip" className="platform-link"><i className="fa-brands fa-linux"></i> Linux</a>
+                                        <a href="./downloads/MioClient-Android.apk" className="platform-link"><i className="fa-brands fa-android"></i> Android</a>
                                     </div>
                                     <p className="text-sm text-gray-600 mt-4">Latest Version: 1.0.0 • 45.2 MB</p>
                                 </div>
@@ -459,10 +287,7 @@
 
                     <footer className="relative py-12 px-6 border-t border-mio-border z-10 bg-mio-bg/50 backdrop-blur-sm">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="text-lg font-bold tracking-wider">
-                                <span className="text-white">Mio</span>
-                                <span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span>
-                            </div>
+                            <div className="text-lg font-bold tracking-wider"><span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span></div>
                             <div className="flex items-center gap-8 text-2xl text-gray-400">
                                 <a href="https://t.me/ddnetsam" target="_blank" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-telegram"></i></a>
                                 <a href="#" target="_blank" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-discord"></i></a>
