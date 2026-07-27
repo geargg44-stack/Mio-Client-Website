@@ -75,9 +75,8 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-        const { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
+        const { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
 
-        // База переводов
         const translations = {
             RU: {
                 nav_features: "Возможности",
@@ -109,6 +108,21 @@
                 download_wrong: "Не та ОС? Выберите вашу платформу:",
                 download_latest: "Последняя версия: 1.0.0 • 45.2 MB",
                 footer_copy: "© 2026 Mio Client. Все права защищены.",
+                // Переводы для модалки
+                modal_free_title: "Free Plan",
+                modal_free_price: "0 ₽",
+                modal_free_f1: "Базовая версия",
+                modal_free_f2: "Стандартная оптимизация",
+                modal_free_f3: "Базовые модули",
+                modal_free_btn: "Скачать",
+                modal_premium_title: "Premium",
+                modal_premium_price: "50 ₽",
+                modal_premium_sub: "/мес",
+                modal_premium_f1: "Все возможности Free",
+                modal_premium_f2: "Новые функции раньше всех",
+                modal_premium_f3: "Полное отсутствие рекламы",
+                modal_premium_f4: "Эксклюзивная косметика",
+                modal_premium_btn: "Купить Premium",
                 feat: [
                     { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'Красиво оформленный, интуитивно понятный интерфейс, позволяющий перемещаться по модулям и настройкам без труда.' },
                     { icon: "fa-solid fa-bolt", title: 'Визуальные эффекты', desc: 'Расширьте границы игрового движка с помощью потрясающих, настраиваемых визуальных эффектов.' },
@@ -148,6 +162,21 @@
                 download_wrong: "Wrong OS? Choose your platform:",
                 download_latest: "Latest Version: 1.0.0 • 45.2 MB",
                 footer_copy: "© 2026 Mio Client. All rights reserved.",
+                // Translations for modal
+                modal_free_title: "Free Plan",
+                modal_free_price: "0 ₽",
+                modal_free_f1: "Base version",
+                modal_free_f2: "Standard optimization",
+                modal_free_f3: "Basic modules",
+                modal_free_btn: "Download",
+                modal_premium_title: "Premium",
+                modal_premium_price: "50 ₽",
+                modal_premium_sub: "/mo",
+                modal_premium_f1: "All Free features",
+                modal_premium_f2: "Early access to new features",
+                modal_premium_f3: "Completely ad-free",
+                modal_premium_f4: "Exclusive cosmetics",
+                modal_premium_btn: "Buy Premium",
                 feat: [
                     { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'A beautifully designed, intuitive interface that allows you to navigate modules and settings with zero friction.' },
                     { icon: "fa-solid fa-bolt", title: 'Visual Effects', desc: 'Push the limits of the game engine with stunning, customizable visual enhancements and effects.' },
@@ -203,6 +232,7 @@
             const [scrolled, setScrolled] = useState(false);
             const [userOS, setUserOS] = useState('Windows');
             const [lang, setLang] = useState('EN');
+            const [showPricing, setShowPricing] = useState(false);
             const t = translations[lang];
             
             const heroX = useMotionValue(0); const heroY = useMotionValue(0);
@@ -233,6 +263,13 @@
                 return 'fa-windows';
             };
 
+            const getDownloadLink = (os) => {
+                if (os === 'macOS') return './downloads/Mac-MioClient.zip';
+                if (os === 'Linux') return './downloads/Linux-MioClient.zip';
+                if (os === 'Android') return './downloads/Andr-MioClient.apk';
+                return './downloads/Win-MioClient.zip'; 
+            };
+
             return (
                 <div className="relative min-h-screen bg-mio-bg text-white overflow-hidden" onMouseMove={handleHeroMouseMove}>
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
@@ -241,17 +278,12 @@
                         <div className="absolute bottom-[-10%] left-[30%] w-[600px] h-[600px] bg-purple-700/10 rounded-full filter blur-[120px] animate-blob"></div>
                     </div>
 
-                    {/* Основной навбар */}
                     <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[95%] md:max-w-[900px] py-2' : 'w-[95%] md:max-w-[900px] py-3'}`}>
                         <div className={`flex items-center justify-between px-4 sm:px-6 rounded-full border border-mio-border bg-mio-bg/70 backdrop-blur-xl ${scrolled ? 'shadow-[0_8px_30px_rgb(0,0,0,0.5)]' : ''}`}>
-                            
-                            {/* Левая часть: Лого + Ссылки (сгруппированы) */}
                             <div className="flex items-center gap-4 md:gap-8 lg:gap-10 whitespace-nowrap">
                                 <div className="text-base md:text-lg font-bold tracking-wider">
                                     <span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span>
                                 </div>
-                                
-                                {/* Ссылки навигации (теперь рядом с лого) */}
                                 <div className="hidden md:flex items-center gap-4 md:gap-5 lg:gap-6 text-xs md:text-sm font-medium text-gray-400">
                                     <a href="#features" className="hover:text-white transition-colors">{t.nav_features}</a>
                                     <a href="#performance" className="hover:text-white transition-colors">{t.nav_performance}</a>
@@ -259,8 +291,6 @@
                                     <a href="#download" className="hover:text-white transition-colors">{t.nav_download}</a>
                                 </div>
                             </div>
-                            
-                            {/* Правая часть: Соцсети */}
                             <div className="flex items-center gap-3 md:gap-4 whitespace-nowrap">
                                 <a href="https://t.me/ddnetsam" target="_blank" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-telegram"></i></a>
                                 <a href="#" target="_blank" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-discord"></i></a>
@@ -269,7 +299,6 @@
                         </div>
                     </motion.nav>
 
-                    {/* Плашка переключения языка в правом углу */}
                     <motion.div 
                         initial={{ y: -50, opacity: 0 }} 
                         animate={{ y: 0, opacity: 1 }} 
@@ -277,18 +306,8 @@
                         className="fixed top-[80px] right-4 md:right-6 z-40"
                     >
                         <div className="flex items-center gap-1 bg-mio-card border border-mio-border rounded-full p-1 shadow-[0_4px_20px_rgb(0,0,0,0.4)] backdrop-blur-sm">
-                            <button 
-                                onClick={() => setLang('RU')} 
-                                className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === 'RU' ? 'bg-mio-primary text-white shadow-[0_0_15px_rgba(180,125,255,0.5)]' : 'text-gray-400 hover:text-white'}`}
-                            >
-                                RU
-                            </button>
-                            <button 
-                                onClick={() => setLang('EN')} 
-                                className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === 'EN' ? 'bg-mio-primary text-white shadow-[0_0_15px_rgba(180,125,255,0.5)]' : 'text-gray-400 hover:text-white'}`}
-                            >
-                                EN
-                            </button>
+                            <button onClick={() => setLang('RU')} className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === 'RU' ? 'bg-mio-primary text-white shadow-[0_0_15px_rgba(180,125,255,0.5)]' : 'text-gray-400 hover:text-white'}`}>RU</button>
+                            <button onClick={() => setLang('EN')} className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === 'EN' ? 'bg-mio-primary text-white shadow-[0_0_15px_rgba(180,125,255,0.5)]' : 'text-gray-400 hover:text-white'}`}>EN</button>
                         </div>
                     </motion.div>
 
@@ -381,17 +400,17 @@
                                 <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">{t.download_title}</h2>
                                 <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{t.download_desc}</p>
                                 
-                                <a href="./downloads/MioClient-Windows.zip" className="relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(180,125,255,0.6)]">
+                                <button onClick={() => setShowPricing(true)} className="relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_60px_rgba(180,125,255,0.6)] cursor-pointer">
                                     <i className={`fa-brands ${getOSIcon(userOS)}`}></i> {t.download_for} {userOS}
-                                </a>
+                                </button>
 
                                 <div className="flex flex-col items-center gap-3 text-gray-400">
                                     <p className="text-sm text-gray-500">{t.download_wrong}</p>
                                     <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-lg font-medium">
-                                        <a href="./downloads/MioClient-Windows.zip" className="platform-link"><i className="fa-brands fa-windows"></i> Windows</a>
-                                        <a href="./downloads/MioClient-macOS.zip" className="platform-link"><i className="fa-brands fa-apple"></i> macOS</a>
-                                        <a href="./downloads/MioClient-Linux.zip" className="platform-link"><i className="fa-brands fa-linux"></i> Linux</a>
-                                        <a href="./downloads/MioClient-Android.apk" className="platform-link"><i className="fa-brands fa-android"></i> Android</a>
+                                        <button onClick={() => { setUserOS('Windows'); setShowPricing(true); }} className="platform-link"><i className="fa-brands fa-windows"></i> Windows</button>
+                                        <button onClick={() => { setUserOS('macOS'); setShowPricing(true); }} className="platform-link"><i className="fa-brands fa-apple"></i> macOS</button>
+                                        <button onClick={() => { setUserOS('Linux'); setShowPricing(true); }} className="platform-link"><i className="fa-brands fa-linux"></i> Linux</button>
+                                        <button onClick={() => { setUserOS('Android'); setShowPricing(true); }} className="platform-link"><i className="fa-brands fa-android"></i> Android</button>
                                     </div>
                                     <p className="text-sm text-gray-600 mt-4">{t.download_latest}</p>
                                 </div>
@@ -411,6 +430,71 @@
                             <p className="text-sm text-gray-600">{t.footer_copy}</p>
                         </div>
                     </footer>
+
+                    {/* Модальное окно с тарифами (переведено) */}
+                    <AnimatePresence>
+                        {showPricing && (
+                            <motion.div 
+                                initial={{ opacity: 0 }} 
+                                animate={{ opacity: 1 }} 
+                                exit={{ opacity: 0 }}
+                                onClick={() => setShowPricing(false)}
+                                className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+                            >
+                                <motion.div 
+                                    initial={{ scale: 0.9, opacity: 0, y: 20 }} 
+                                    animate={{ scale: 1, opacity: 1, y: 0 }} 
+                                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="relative bg-mio-card border border-mio-border rounded-3xl p-8 md:p-10 max-w-4xl w-full flex flex-col md:flex-row gap-6 md:gap-8 shadow-2xl"
+                                >
+                                    <button onClick={() => setShowPricing(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl transition-colors z-10">
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+
+                                    {/* Free Plan */}
+                                    <div className="flex-1 bg-mio-bg/50 border border-mio-border rounded-2xl p-6 flex flex-col items-center text-center">
+                                        <i className="fa-solid fa-seedling text-mio-primary text-3xl mb-4"></i>
+                                        <h3 className="text-2xl font-bold mb-2">{t.modal_free_title}</h3>
+                                        <p className="text-4xl font-extrabold mb-6 text-gray-300">{t.modal_free_price}</p>
+                                        <div className="flex flex-col gap-3 text-gray-400 text-left w-full mb-8 flex-1">
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-primary"></i> {t.modal_free_f1}</p>
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-primary"></i> {t.modal_free_f2}</p>
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-primary"></i> {t.modal_free_f3}</p>
+                                        </div>
+                                        <a 
+                                            href={getDownloadLink(userOS)} 
+                                            className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-mio-card border border-mio-border hover:border-mio-primary/50 transition-all font-semibold text-white"
+                                        >
+                                            <i className={`fa-brands ${getOSIcon(userOS)}`}></i> {t.modal_free_btn} {userOS}
+                                        </a>
+                                    </div>
+
+                                    {/* Premium Plan */}
+                                    <div className="flex-1 bg-gradient-to-b from-mio-primary/10 to-mio-secondary/5 border-2 border-mio-primary rounded-2xl p-6 flex flex-col items-center text-center relative shadow-[0_0_30px_rgba(180,125,255,0.2)]">
+                                        <div className="absolute top-0 right-0 bg-mio-primary text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl">PRO</div>
+                                        <i className="fa-solid fa-crown text-mio-secondary text-3xl mb-4"></i>
+                                        <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent">{t.modal_premium_title}</h3>
+                                        <p className="text-4xl font-extrabold mb-6 text-white">{t.modal_premium_price}<span className="text-lg font-light text-gray-400">{t.modal_premium_sub}</span></p>
+                                        <div className="flex flex-col gap-3 text-gray-300 text-left w-full mb-8 flex-1">
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-secondary"></i> {t.modal_premium_f1}</p>
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-secondary"></i> {t.modal_premium_f2}</p>
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-secondary"></i> {t.modal_premium_f3}</p>
+                                            <p className="flex items-center gap-2"><i className="fa-solid fa-check text-mio-secondary"></i> {t.modal_premium_f4}</p>
+                                        </div>
+                                        <a 
+                                            href="https://dalink.to/samporter" 
+                                            target="_blank"
+                                            className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-transform hover:scale-105 shadow-lg"
+                                        >
+                                            <i className="fa-solid fa-bolt"></i> {t.modal_premium_btn}
+                                        </a>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             );
         }
