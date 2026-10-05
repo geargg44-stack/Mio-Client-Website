@@ -204,6 +204,7 @@
                 nav_features: "Возможности",
                 nav_performance: "Производительность",
                 nav_gallery: "Галерея",
+                nav_faq: "FAQ",
                 nav_download: "Скачать",
                 hero_version: "ВЕРСИЯ 1.0.0 ОФИЦИАЛЬНО ВЫПУЩЕНА",
                 hero_version_h: "ХЭЛЛОУИНСКОЕ ИЗДАНИЕ • ВЕРСИЯ 1.0.0",
@@ -217,6 +218,16 @@
                 features_title: "Создан для совершенства.",
                 gallery_tag: "Галерея",
                 gallery_title: "Визуальный шедевр.",
+                faq_tag: "Помощь",
+                faq_title: "Часто задаваемые вопросы",
+                faq_q1: "Безопасно ли использовать Mio Client?",
+                faq_a1: "Да, абсолютно безопасно. Мы не собираем ваши данные.",
+                faq_q2: "Какие системные требования у клиента?",
+                faq_a2: "Mio Client невероятно легковесен и оптимизирован. Он без проблем запускается на Windows 7, macOS 10.13+ и современных дистрибутивах Linux. Для игры достаточно 2 ГБ оперативной памяти и любого процессора последних 10 лет.",
+                faq_q3: "Как устанавливать и обновлять клиент?",
+                faq_a3: "Просто скачайте архив для вашей операционной системы, распакуйте его в любую папку и запустите исполняемый файл. Обновления выходят автоматически или проверяются при запуске.",
+                faq_q4: "Будут ли добавлены новые функции?",
+                faq_a4: "Конечно! Мы активно работаем над клиентом и прислушиваемся к сообществу. Вы можете предложить свои идеи в нашем Discord-сервере.",
                 perf_tag: "Производительность",
                 perf_title: "Несравненная эффективность.",
                 perf_desc: "Создан с нуля, чтобы ваша игра работала плавнее, чем когда-либо.",
@@ -267,6 +278,7 @@
                 nav_features: "Features",
                 nav_performance: "Performance",
                 nav_gallery: "Gallery",
+                nav_faq: "FAQ",
                 nav_download: "Download",
                 hero_version: "VERSION 1.0.0 OFFICIALLY RELEASED",
                 hero_version_h: "HALLOWEEN EDITION • VERSION 1.0.0",
@@ -280,6 +292,16 @@
                 features_title: "Built for perfection.",
                 gallery_tag: "Gallery",
                 gallery_title: "A visual masterpiece.",
+                faq_tag: "Help",
+                faq_title: "Frequently Asked Questions",
+                faq_q1: "Is it safe to use Mio Client?",
+                faq_a1: "Yes, it is absolutely safe. We do not collect your data.",
+                faq_q2: "What are the system requirements?",
+                faq_a2: "Mio Client is incredibly lightweight and optimized. It runs smoothly on Windows 7, macOS 10.13+, and modern Linux distributions. You only need 2GB of RAM and any CPU from the last 10 years to play.",
+                faq_q3: "How to install and update the client?",
+                faq_a3: "Just download the archive for your OS, extract it to any folder, and run the executable file. Updates are released automatically or checked at startup.",
+                faq_q4: "Will new features be added?",
+                faq_a4: "Of course! We are actively working on the client and listen to the community. You can suggest your ideas in our Discord server.",
                 perf_tag: "Performance",
                 perf_title: "Unrivaled efficiency.",
                 perf_desc: "Engineered from the ground up to ensure your game runs smoother than ever before.",
@@ -515,6 +537,46 @@
             );
         };
 
+        const FaqItem = ({ question, answer, index, activeIndex, setActiveIndex, halloween }) => {
+            const isActive = activeIndex === index;
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className={`glass bg-mio-card/60 border rounded-xl overflow-hidden transition-all duration-300 ${isActive ? 'border-mio-primary/40 shadow-[0_0_35px_rgb(var(--p)/0.12)]' : 'glass-hover'}`}
+                >
+                    <button
+                        onClick={() => setActiveIndex(isActive ? null : index)}
+                        aria-expanded={isActive}
+                        className="w-full flex items-center justify-between gap-4 p-6 text-left"
+                    >
+                        <span className="flex items-center gap-4 pr-2">
+                            {halloween && <i className={`fa-solid ${isActive ? 'fa-ghost' : 'fa-skull'} text-mio-primary/70 text-sm transition-all`}></i>}
+                            <span className="text-lg font-medium text-gray-200 tracking-tight">{question}</span>
+                        </span>
+                        <motion.div animate={{ rotate: isActive ? 180 : 0 }} transition={{ duration: 0.3 }} className="flex-shrink-0">
+                            <i className="fa-solid fa-chevron-down text-mio-primary text-sm"></i>
+                        </motion.div>
+                    </button>
+                    <AnimatePresence initial={false}>
+                        {isActive && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                className="overflow-hidden"
+                            >
+                                <p className={`pb-6 pr-6 text-gray-400 font-light leading-relaxed text-[15px] ${halloween ? 'pl-[4.25rem]' : 'pl-6'}`}>{answer}</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+            );
+        };
+
         function App() {
             const [scrolled, setScrolled] = useState(false);
             const [userOS, setUserOS] = useState('Windows');
@@ -522,6 +584,7 @@
             const [showPricing, setShowPricing] = useState(false);
             const [premiumSoldOut, setPremiumSoldOut] = useState(false);
             const [showAndroidMsg, setShowAndroidMsg] = useState(false);
+            const [activeFaq, setActiveFaq] = useState(null);
             const [theme, setTheme] = useState(() => {
                 try { return localStorage.getItem('mio-theme') || 'halloween'; } catch (e) { return 'halloween'; }
             });
@@ -572,6 +635,13 @@
                 if (os === 'Linux') return 'fa-linux';
                 return 'fa-windows';
             };
+
+            const faqItems = [
+                { q: t.faq_q1, a: t.faq_a1 },
+                { q: t.faq_q2, a: t.faq_a2 },
+                { q: t.faq_q3, a: t.faq_a3 },
+                { q: t.faq_q4, a: t.faq_a4 }
+            ];
 
             const showCountdown = daysLeft >= 0 && daysLeft <= 60;
 
@@ -629,6 +699,7 @@
                                     <a href="#features" className="hover:text-white transition-colors">{t.nav_features}</a>
                                     <a href="#performance" className="hover:text-white transition-colors">{t.nav_performance}</a>
                                     <a href="#gallery" className="hover:text-white transition-colors">{t.nav_gallery}</a>
+                                    <a href="#faq" className="hover:text-white transition-colors">{t.nav_faq}</a>
                                     <a href="#download" className="hover:text-white transition-colors">{t.nav_download}</a>
                                 </div>
                             </div>
@@ -756,6 +827,18 @@
                                             <p className="text-gray-500 font-light">{stat.desc}</p>
                                         </div>
                                     </motion.div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* FAQ */}
+                    <section id="faq" className="relative py-32 px-6 z-10">
+                        <div className="max-w-3xl mx-auto">
+                            <SectionHead tag={t.faq_tag} title={t.faq_title} halloween={hw} />
+                            <div className="flex flex-col gap-3">
+                                {faqItems.map((item, i) => (
+                                    <FaqItem key={i} question={item.q} answer={item.a} index={i} activeIndex={activeFaq} setActiveIndex={setActiveFaq} halloween={hw} />
                                 ))}
                             </div>
                         </div>
