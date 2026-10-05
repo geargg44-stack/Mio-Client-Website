@@ -89,6 +89,16 @@
 
         .lang-btn { transition: all 0.3s ease; }
 
+        .glass { background: rgba(255,255,255,.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.07); }
+        .glass-hover { transition: all .3s ease; }
+        .glass-hover:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14); }
+        .btn-premium {
+            background: linear-gradient(to right, rgb(var(--p)), rgb(var(--s)));
+            box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 10px 30px -10px rgb(var(--p) / .55), inset 0 1px 0 rgba(255,255,255,.2);
+            transition: all .3s ease;
+        }
+        .btn-premium:hover { box-shadow: 0 0 0 1px rgba(255,255,255,.2), 0 15px 40px -10px rgb(var(--p) / .75), inset 0 1px 0 rgba(255,255,255,.3); transform: translateY(-2px); }
+
         .glow-primary:hover { box-shadow: 0 0 45px rgb(var(--p) / .5); }
         .glow-primary-lg:hover { box-shadow: 0 0 70px rgb(var(--p) / .65); }
         .text-grad { background-image: linear-gradient(90deg, rgb(var(--p)), rgb(var(--s))); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -174,7 +184,7 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo } = React;
-        const { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
+        const { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
 
         const THEME_COLORS = {
             halloween: { p: '255,122,26', s: '157,78,255' },
@@ -222,6 +232,24 @@
                 download_for: "Скачать для",
                 download_wrong: "Не та ОС? Выберите вашу платформу:",
                 download_latest: "Последняя версия: 1.0.0 • 45.2 MB",
+                launcher_title: "Ищете лаунчер?",
+                launcher_desc: "Мы также предлагаем легкий лаунчер для автообновления клиента (только Windows и Linux).",
+                modal_free_title: "Free Plan",
+                modal_free_price: "0 ₽",
+                modal_free_f1: "Базовая версия",
+                modal_free_f2: "Стандартная оптимизация",
+                modal_free_f3: "Базовые модули",
+                modal_free_btn: "Скачать",
+                modal_premium_title: "Premium",
+                modal_premium_price: "50 ₽",
+                modal_premium_sub: "/мес",
+                modal_premium_f1: "Все возможности Free",
+                modal_premium_f2: "Новые функции раньше всех",
+                modal_premium_f3: "Полное отсутствие рекламы",
+                modal_premium_f4: "Эксклюзивная косметика",
+                modal_premium_btn: "Купить Premium",
+                modal_premium_out: "К сожалению, Premium-версия пока нет в наличии.",
+                modal_android_msg: "Для Android версии пока нет, но возможно будет в будущем!",
                 footer_copy: "© 2026 Mio Client. Все права защищены.",
                 footer_h: "Trick or treat? Скачай клиент — получишь угощение.",
                 theme_h: "Хэллоуин",
@@ -267,6 +295,24 @@
                 download_for: "Download for",
                 download_wrong: "Wrong OS? Choose your platform:",
                 download_latest: "Latest Version: 1.0.0 • 45.2 MB",
+                launcher_title: "Looking for a launcher?",
+                launcher_desc: "We also offer a lightweight launcher for auto-updating the client (Windows and Linux only).",
+                modal_free_title: "Free Plan",
+                modal_free_price: "0 ₽",
+                modal_free_f1: "Base version",
+                modal_free_f2: "Standard optimization",
+                modal_free_f3: "Basic modules",
+                modal_free_btn: "Download",
+                modal_premium_title: "Premium",
+                modal_premium_price: "50 ₽",
+                modal_premium_sub: "/mo",
+                modal_premium_f1: "All Free features",
+                modal_premium_f2: "Early access to new features",
+                modal_premium_f3: "Completely ad-free",
+                modal_premium_f4: "Exclusive cosmetics",
+                modal_premium_btn: "Buy Premium",
+                modal_premium_out: "Unfortunately, the Premium version is out of stock.",
+                modal_android_msg: "The Android version is not available yet, but might be in the future!",
                 footer_copy: "© 2026 Mio Client. All rights reserved.",
                 footer_h: "Trick or treat? Grab the client — get the treat.",
                 theme_h: "Halloween",
@@ -283,10 +329,10 @@
         };
 
         const DOWNLOADS = {
-            Windows: './downloads/MioClient-Windows.zip',
-            macOS: './downloads/MioClient-macOS.zip',
-            Linux: './downloads/MioClient-Linux.zip',
-            Android: './downloads/MioClient-Android.apk',
+            Windows: './downloads/Win-MioClient.zip',
+            macOS: './downloads/Mac-MioClient.zip',
+            Linux: './downloads/Linux-MioClient.zip',
+            Android: '#',
         };
 
         /* ---------- Декор ---------- */
@@ -473,6 +519,9 @@
             const [scrolled, setScrolled] = useState(false);
             const [userOS, setUserOS] = useState('Windows');
             const [lang, setLang] = useState('EN');
+            const [showPricing, setShowPricing] = useState(false);
+            const [premiumSoldOut, setPremiumSoldOut] = useState(false);
+            const [showAndroidMsg, setShowAndroidMsg] = useState(false);
             const [theme, setTheme] = useState(() => {
                 try { return localStorage.getItem('mio-theme') || 'halloween'; } catch (e) { return 'halloween'; }
             });
@@ -525,6 +574,27 @@
             };
 
             const showCountdown = daysLeft >= 0 && daysLeft <= 60;
+
+            const openDownload = (os) => {
+                if (os) setUserOS(os);
+                setPremiumSoldOut(false);
+                setShowAndroidMsg(false);
+                setShowPricing(true);
+            };
+            const closeModal = () => { setShowPricing(false); setPremiumSoldOut(false); setShowAndroidMsg(false); };
+            const handleFreeDownload = (e) => {
+                if (userOS === 'Android') { e.preventDefault(); setPremiumSoldOut(false); setShowAndroidMsg(true); }
+            };
+            const handlePremiumClick = () => {
+                if (userOS === 'Android') { setShowAndroidMsg(true); setPremiumSoldOut(false); }
+                else { setPremiumSoldOut(true); setShowAndroidMsg(false); }
+            };
+            useEffect(() => {
+                if (!showPricing) return;
+                const onKey = (e) => { if (e.key === 'Escape') closeModal(); };
+                window.addEventListener('keydown', onKey);
+                return () => window.removeEventListener('keydown', onKey);
+            }, [showPricing]);
 
             return (
                 <div className="relative min-h-screen bg-mio-bg text-white overflow-hidden" onMouseMove={handleMouseMove}>
@@ -700,19 +770,27 @@
                                 <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">{t.download_title}</h2>
                                 <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{hw ? t.download_desc_h : t.download_desc}</p>
 
-                                <a href={DOWNLOADS[userOS]} className="glow-primary-lg relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105">
+                                <button onClick={() => openDownload()} className="glow-primary-lg relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105">
                                     <i className={`fa-brands ${getOSIcon(userOS)}`}></i> {t.download_for} {userOS}
-                                </a>
+                                </button>
 
                                 <div className="flex flex-col items-center gap-3 text-gray-400">
                                     <p className="text-sm text-gray-500">{t.download_wrong}</p>
                                     <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-lg font-medium">
-                                        <a href={DOWNLOADS.Windows} className={`platform-link ${userOS === 'Windows' ? 'active' : ''}`}><i className="fa-brands fa-windows"></i> Windows</a>
-                                        <a href={DOWNLOADS.macOS} className={`platform-link ${userOS === 'macOS' ? 'active' : ''}`}><i className="fa-brands fa-apple"></i> macOS</a>
-                                        <a href={DOWNLOADS.Linux} className={`platform-link ${userOS === 'Linux' ? 'active' : ''}`}><i className="fa-brands fa-linux"></i> Linux</a>
-                                        <a href={DOWNLOADS.Android} className={`platform-link ${userOS === 'Android' ? 'active' : ''}`}><i className="fa-brands fa-android"></i> Android</a>
+                                        {[['Windows', 'fa-windows'], ['macOS', 'fa-apple'], ['Linux', 'fa-linux'], ['Android', 'fa-android']].map(([os, ic]) => (
+                                            <button key={os} onClick={() => openDownload(os)} className={`platform-link ${userOS === os ? 'active' : ''}`}><i className={`fa-brands ${ic}`}></i> {os}</button>
+                                        ))}
                                     </div>
                                     <p className="text-sm text-gray-600 mt-4">{t.download_latest}</p>
+                                </div>
+
+                                <div className="mt-20 pt-10 border-t border-white/5 max-w-md mx-auto">
+                                    <p className="text-gray-500 text-xs font-medium tracking-[0.2em] uppercase mb-4">{t.launcher_title}</p>
+                                    <p className="text-gray-600 text-xs mb-6">{t.launcher_desc}</p>
+                                    <div className="flex flex-wrap justify-center gap-3 text-xs font-medium">
+                                        <a href="./downloads/MioLauncher-Windows.zip" className="glass glass-hover inline-flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:text-white"><i className="fa-brands fa-windows"></i> Windows</a>
+                                        <a href="./downloads/MioLauncher-Linux.zip" className="glass glass-hover inline-flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:text-white"><i className="fa-brands fa-linux"></i> Linux</a>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
@@ -739,6 +817,61 @@
                             </div>
                         </div>
                     </footer>
+
+                    <AnimatePresence>
+                        {showPricing && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closeModal} className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
+                                <motion.div
+                                    initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="relative glass rounded-3xl p-8 md:p-12 max-w-4xl w-full flex flex-col gap-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] bg-mio-card/90 my-auto"
+                                >
+                                    <button onClick={closeModal} aria-label="Close" className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors z-10"><i className="fa-solid fa-xmark text-lg"></i></button>
+
+                                    <div className="flex flex-col md:flex-row gap-6">
+                                        <div className="flex-1 glass rounded-2xl p-8 flex flex-col items-center text-center">
+                                            <i className={`fa-solid ${hw ? 'fa-ghost' : 'fa-seedling'} text-mio-primary text-2xl mb-6`}></i>
+                                            <h3 className="text-xl font-bold mb-2 tracking-tight">{t.modal_free_title}</h3>
+                                            <p className="text-3xl font-extrabold mb-8 text-gray-300 tracking-tight">{t.modal_free_price}</p>
+                                            <div className="flex flex-col gap-3 text-gray-400 text-left w-full mb-8 flex-1">
+                                                {[t.modal_free_f1, t.modal_free_f2, t.modal_free_f3].map((f, i) => (
+                                                    <p key={i} className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-primary text-xs"></i> {f}</p>
+                                                ))}
+                                            </div>
+                                            <a href={DOWNLOADS[userOS]} onClick={handleFreeDownload} className="w-full glass glass-hover inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-white font-semibold text-sm">
+                                                <i className={`fa-brands ${getOSIcon(userOS)} text-xs`}></i> {t.modal_free_btn} {userOS}
+                                            </a>
+                                        </div>
+
+                                        <div className="flex-1 relative rounded-2xl p-8 flex flex-col items-center text-center border border-mio-primary/40 shadow-[0_0_40px_rgb(var(--p)/0.15)] overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-b from-mio-primary/10 to-transparent -z-10"></div>
+                                            <div className="absolute top-0 right-0 bg-mio-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl tracking-wider">PRO</div>
+                                            <i className={`fa-solid ${hw ? 'fa-skull' : 'fa-crown'} text-mio-secondary text-2xl mb-6`}></i>
+                                            <h3 className="text-xl font-bold mb-2 tracking-tight text-grad">{t.modal_premium_title}</h3>
+                                            <p className="text-3xl font-extrabold mb-8 text-white tracking-tight">{t.modal_premium_price}<span className="text-sm font-light text-gray-500">{t.modal_premium_sub}</span></p>
+                                            <div className="flex flex-col gap-3 text-gray-300 text-left w-full mb-8 flex-1">
+                                                {[t.modal_premium_f1, t.modal_premium_f2, t.modal_premium_f3, t.modal_premium_f4].map((f, i) => (
+                                                    <p key={i} className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-secondary text-xs"></i> {f}</p>
+                                                ))}
+                                            </div>
+                                            <button onClick={handlePremiumClick} className="btn-premium w-full inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-white font-semibold text-sm">
+                                                <i className="fa-solid fa-bolt text-xs"></i> {t.modal_premium_btn}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <AnimatePresence>
+                                        {(premiumSoldOut || showAndroidMsg) && (
+                                            <motion.div key="msg" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden w-full">
+                                                <p className="text-mio-primary text-sm text-center font-medium tracking-wide">{showAndroidMsg ? t.modal_android_msg : t.modal_premium_out}</p>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             );
         }
