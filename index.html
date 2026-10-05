@@ -1,37 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="halloween">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#09060f">
     <title>Mio Client — The next generation DDNet client</title>
-    
-    <!-- Иконка сайта -->
+
     <link rel="icon" type="image/png" href="Icon.png">
 
-    <!-- Подключаем шрифты и стили -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Creepster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Tailwind CSS -->
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & Framer Motion -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/framer-motion@11.2.4/dist/framer-motion.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.2.4/dist/framer-motion.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'mio-bg': '#05050a',
-                        'mio-card': '#0a0a12',
-                        'mio-border': 'rgba(255,255,255,0.05)',
-                        'mio-primary': '#a855f7',
-                        'mio-secondary': '#ec4899',
+                        'mio-bg': 'rgb(var(--bg) / <alpha-value>)',
+                        'mio-card': 'rgb(var(--card) / <alpha-value>)',
+                        'mio-border': 'rgba(255,255,255,0.08)',
+                        'mio-primary': 'rgb(var(--p) / <alpha-value>)',
+                        'mio-secondary': 'rgb(var(--s) / <alpha-value>)',
+                        'mio-green': 'rgb(var(--g) / <alpha-value>)',
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     animation: {
@@ -55,34 +54,118 @@
     </script>
 
     <style>
-        body { background-color: #05050a; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #05050a; }
-        ::-webkit-scrollbar-thumb { background: #ffffff10; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ffffff20; }
-        
+        /* ---------- Темы ---------- */
+        :root, [data-theme="halloween"] {
+            --p: 255 122 26;      /* тыквенный оранжевый */
+            --s: 157 78 255;      /* призрачный фиолетовый */
+            --g: 132 255 90;      /* ядовитый зелёный */
+            --bg: 9 6 15;
+            --card: 21 15 28;
+        }
+        [data-theme="classic"] {
+            --p: 180 125 255;
+            --s: 255 77 136;
+            --g: 132 255 90;
+            --bg: 11 13 18;
+            --card: 21 24 33;
+        }
+
+        html { scroll-behavior: smooth; }
+        body { background-color: rgb(var(--bg)); overflow-x: hidden; transition: background-color .6s ease; }
+        ::selection { background: rgb(var(--p) / .45); color: #fff; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--bg)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--p) / .35); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--p) / .7); }
+
+        a:focus-visible, button:focus-visible { outline: 2px solid rgb(var(--p)); outline-offset: 3px; }
+
         .interactive-text { transition: all 0.3s ease; display: inline-block; }
-        .interactive-text:hover { transform: scale(1.01); text-shadow: 0 0 60px rgba(168, 85, 247, 0.3); cursor: default; }
+        .interactive-text:hover { transform: scale(1.02); filter: drop-shadow(0 0 22px rgb(var(--p) / .55)); cursor: default; }
 
-        .btn-premium {
-            background: linear-gradient(to right, #a855f7, #ec4899);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 10px 30px -10px rgba(168, 85, 247, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+        .platform-link { transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; color: #6b7280; }
+        .platform-link:hover { color: #ffffff; transform: scale(1.1); }
+        .platform-link.active { color: rgb(var(--p)); }
+
+        .lang-btn { transition: all 0.3s ease; }
+
+        .glow-primary:hover { box-shadow: 0 0 45px rgb(var(--p) / .5); }
+        .glow-primary-lg:hover { box-shadow: 0 0 70px rgb(var(--p) / .65); }
+        .text-grad { background-image: linear-gradient(90deg, rgb(var(--p)), rgb(var(--s))); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+        /* ---------- Заголовок ---------- */
+        [data-theme="halloween"] .font-spooky {
+            font-family: 'Creepster', 'Inter', cursive;
+            font-weight: 400;
+            letter-spacing: .03em;
         }
-        .btn-premium:hover {
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 15px 40px -10px rgba(168, 85, 247, 0.7), inset 0 1px 0 rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+        .flicker { animation: flicker 5s infinite; }
+        @keyframes flicker {
+            0%, 18%, 22%, 24%, 52%, 56%, 100% { opacity: 1; filter: drop-shadow(0 0 22px rgb(var(--p) / .55)); }
+            20%, 23%, 54% { opacity: .55; filter: drop-shadow(0 0 4px rgb(var(--p) / .2)); }
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        /* ---------- Туман ---------- */
+        .fog {
+            position: fixed; left: 0; bottom: 0; width: 200%; height: 38vh; pointer-events: none; z-index: 1;
+            background:
+                radial-gradient(ellipse 30% 60% at 10% 80%, rgb(var(--s) / .16), transparent 70%),
+                radial-gradient(ellipse 25% 50% at 38% 90%, rgb(var(--p) / .10), transparent 70%),
+                radial-gradient(ellipse 30% 60% at 65% 85%, rgb(var(--s) / .14), transparent 70%),
+                radial-gradient(ellipse 25% 50% at 90% 90%, rgb(var(--p) / .10), transparent 70%);
+            animation: drift 45s linear infinite;
+            filter: blur(18px);
         }
-        .glass-hover:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.1);
+        .fog.two { height: 28vh; opacity: .8; animation-duration: 70s; animation-direction: reverse; }
+        @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        .vignette {
+            position: fixed; inset: 0; pointer-events: none; z-index: 2;
+            background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / .55) 100%);
+        }
+
+        /* ---------- Летучие мыши ---------- */
+        .bat-flap { animation: flap .32s ease-in-out infinite alternate; transform-origin: center; }
+        @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+
+        /* ---------- Паук ---------- */
+        .spider {
+            position: absolute; top: 0; z-index: 6; display: flex; flex-direction: column; align-items: center;
+            animation: dangle 7s ease-in-out infinite;
+        }
+        .spider .thread { width: 1px; height: 22vh; background: linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,.4)); }
+        .spider i { color: #1a1224; font-size: 1.6rem; filter: drop-shadow(0 0 6px rgb(var(--s) / .6)); margin-top: -2px; }
+        @keyframes dangle { 0%, 100% { transform: translateY(-9vh); } 50% { transform: translateY(6vh); } }
+
+        /* ---------- Луна ---------- */
+        .moon {
+            width: 150px; height: 150px; border-radius: 50%;
+            background:
+                radial-gradient(circle at 30% 35%, rgba(0,0,0,.12) 0 9%, transparent 10%),
+                radial-gradient(circle at 62% 28%, rgba(0,0,0,.10) 0 6%, transparent 7%),
+                radial-gradient(circle at 55% 66%, rgba(0,0,0,.12) 0 11%, transparent 12%),
+                radial-gradient(circle at 35% 30%, #fff1d6, #ffc98a 70%, #e8923a);
+            box-shadow: 0 0 60px rgb(var(--p) / .45), 0 0 160px rgb(var(--p) / .25);
+        }
+
+        /* ---------- Тыквы ---------- */
+        .pumpkin-glow { filter: drop-shadow(0 0 14px rgb(var(--p) / .8)); animation: bob 4s ease-in-out infinite; display: inline-block; }
+        @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+        .pumpkin-pulse { animation: pulse 2.6s ease-in-out infinite; display: inline-block; }
+        @keyframes pulse { 0%, 100% { filter: drop-shadow(0 0 6px rgb(var(--p) / .4)); } 50% { filter: drop-shadow(0 0 20px rgb(var(--p) / .95)); } }
+
+        /* ---------- Галерея ---------- */
+        .gallery-scroll { scrollbar-width: thin; scrollbar-color: rgb(var(--p) / .4) transparent; }
+
+        /* ---------- Курсорный свет ---------- */
+        .cursor-glow {
+            position: fixed; top: 0; left: 0; width: 520px; height: 520px; pointer-events: none; z-index: 3; border-radius: 50%;
+            background: radial-gradient(circle, rgb(var(--p) / .13), transparent 65%);
+            mix-blend-mode: screen;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
         }
     </style>
 </head>
@@ -90,129 +173,106 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-        const { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
+        const { useState, useEffect, useRef, useMemo } = React;
+        const { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } = Motion;
+
+        const THEME_COLORS = {
+            halloween: { p: '255,122,26', s: '157,78,255' },
+            classic: { p: '180,125,255', s: '255,77,136' },
+        };
+
+        const plural = (n, a, b, c) => {
+            const m = n % 10, k = n % 100;
+            if (k > 10 && k < 20) return c;
+            if (m === 1) return a;
+            if (m > 1 && m < 5) return b;
+            return c;
+        };
 
         const translations = {
             RU: {
                 nav_features: "Возможности",
-                nav_faq: "FAQ",
+                nav_performance: "Производительность",
                 nav_gallery: "Галерея",
                 nav_download: "Скачать",
                 hero_version: "ВЕРСИЯ 1.0.0 ОФИЦИАЛЬНО ВЫПУЩЕНА",
+                hero_version_h: "ХЭЛЛОУИНСКОЕ ИЗДАНИЕ • ВЕРСИЯ 1.0.0",
+                countdown: (n) => `До Хэллоуина ${n} ${plural(n, 'день', 'дня', 'дней')}`,
+                countdown_today: "Сегодня Хэллоуин — угощайся!",
                 hero_subtitle: "Клиент нового поколения для DDNet.",
                 hero_desc: "Испытайте непревзойденную производительность, потрясающую визуализацию и тщательно продуманный интерфейс, созданный для будущего.",
                 btn_download: "Скачать сейчас",
-                btn_github: "GitHub",
+                btn_github: "Смотреть на GitHub",
                 btn_support: "Поддержать",
                 features_tag: "Возможности",
                 features_title: "Создан для совершенства.",
                 gallery_tag: "Галерея",
                 gallery_title: "Визуальный шедевр.",
-                faq_tag: "Помощь",
-                faq_title: "Часто задаваемые вопросы",
-                faq_q1: "Безопасно ли использовать Mio Client?",
-                faq_a1: "Да, абсолютно безопасно. Клиент имеет открытый исходный код (Open Source), что означает, что любой желающий может проверить код на наличие вредоносных функций. Мы не собираем ваши данные.",
-                faq_q2: "Какие системные требования у клиента?",
-                faq_a2: "Mio Client невероятно легковесен и оптимизирован. Он без проблем запускается на Windows 7, macOS 10.13+ и современных дистрибутивах Linux. Для игры достаточно 2 ГБ оперативной памяти и любого процессора последних 10 лет.",
-                faq_q3: "Как устанавливать и обновлять клиент?",
-                faq_a3: "Просто скачайте архив для вашей операционной системы, распакуйте его в любую папку и запустите исполняемый файл. Обновления выходят автоматически или проверяются при запуске.",
-                faq_q4: "Будут ли добавлены новые функции?",
-                faq_a4: "Конечно! Мы активно работаем над клиентом и прислушиваемся к сообществу. Вы можете предложить свои идеи в нашем Discord-сервере или на GitHub.",
+                perf_tag: "Производительность",
+                perf_title: "Несравненная эффективность.",
+                perf_desc: "Создан с нуля, чтобы ваша игра работала плавнее, чем когда-либо.",
+                stat1_label: "Кадров в секунду",
+                stat1_desc: "Невероятно плавный рендеринг",
+                stat2_label: "Использование памяти",
+                stat2_desc: "Невероятно легкий",
+                stat3_label: "Скорость запуска",
+                stat3_desc: "Мгновенный запуск",
                 download_title: "Готовы играть?",
                 download_desc: "Скачайте Mio Client сегодня и поднимите свой игровой опыт на новый уровень.",
+                download_desc_h: "Скачайте Mio Client сегодня — никаких подвохов, только угощение.",
                 download_for: "Скачать для",
                 download_wrong: "Не та ОС? Выберите вашу платформу:",
                 download_latest: "Последняя версия: 1.0.0 • 45.2 MB",
-                launcher_title: "Ищете лаунчер?",
-                launcher_desc: "Мы также предлагаем легкий лаунчер для автообновления клиента (только Windows и Linux).",
-                launcher_win: "Windows",
-                launcher_linux: "Linux",
-                footer_desc: "The next generation DDNet client.",
-                footer_links_title: "Навигация",
-                footer_socials_title: "Сообщество",
-                footer_copy: "© 2026 Mio Client.",
-                footer_made: "Сделано для DDNet сообщества",
-                modal_free_title: "Free Plan",
-                modal_free_price: "0 ₽",
-                modal_free_f1: "Базовая версия",
-                modal_free_f2: "Стандартная оптимизация",
-                modal_free_f3: "Базовые модули",
-                modal_free_btn: "Скачать",
-                modal_premium_title: "Premium",
-                modal_premium_price: "50 ₽",
-                modal_premium_sub: "/мес",
-                modal_premium_f1: "Все возможности Free",
-                modal_premium_f2: "Новые функции раньше всех",
-                modal_premium_f3: "Полное отсутствие рекламы",
-                modal_premium_f4: "Эксклюзивная косметика",
-                modal_premium_btn: "Купить Premium",
-                modal_premium_out: "К сожалению, Premium-версия пока нет в наличии.",
-                modal_android_msg: "Для Android версии пока нет, но возможно будет в будущем!",
+                footer_copy: "© 2026 Mio Client. Все права защищены.",
+                footer_h: "Trick or treat? Скачай клиент — получишь угощение.",
+                theme_h: "Хэллоуин",
+                theme_c: "Обычная тема",
                 feat: [
                     { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'Красиво оформленный, интуитивно понятный интерфейс, позволяющий перемещаться по модулям и настройкам без труда.' },
                     { icon: "fa-solid fa-bolt", title: 'Визуальные эффекты', desc: 'Расширьте границы игрового движка с помощью потрясающих, настраиваемых визуальных эффектов.' },
                     { icon: "fa-solid fa-palette", title: 'Кастомизация', desc: 'Настройте каждый аспект клиента. От тем до биндов, сделайте Mio по-настоящему вашим до пикселя.' },
-                    { icon: "fa-solid fa-fire", title: 'Оптимизация', desc: 'Высокооптимизированная кодовая база, обеспечивающая максимальный FPS и минимальное потребление памяти даже на старых ПК.' },
+                    { icon: "fa-solid fa-fire", title: 'Производительность', desc: 'Высокооптимизированная кодовая база, обеспечивающая максимальный FPS и минимальное потребление памяти даже на старых ПК.' },
                     { icon: "fa-solid fa-gear", title: 'Современный UI', desc: 'Создан с использованием футуристического дизайна, предлагающий элегантный, стеклянный интерфейс.' },
                     { icon: "fa-brands fa-osi", title: 'Open Source', desc: 'Полностью прозрачно и управляемо сообществом. Вносите вклад, изменяйте и учитесь на кодовой базе.' }
                 ]
             },
             EN: {
                 nav_features: "Features",
-                nav_faq: "FAQ",
+                nav_performance: "Performance",
                 nav_gallery: "Gallery",
                 nav_download: "Download",
                 hero_version: "VERSION 1.0.0 OFFICIALLY RELEASED",
+                hero_version_h: "HALLOWEEN EDITION • VERSION 1.0.0",
+                countdown: (n) => `${n} ${n === 1 ? 'day' : 'days'} until Halloween`,
+                countdown_today: "It's Halloween — treat yourself!",
                 hero_subtitle: "The next generation DDNet client.",
                 hero_desc: "Experience unparalleled performance, stunning visuals, and a meticulously crafted interface designed for the future.",
                 btn_download: "Download Now",
-                btn_github: "GitHub",
+                btn_github: "View on GitHub",
                 btn_support: "Support",
                 features_tag: "Features",
                 features_title: "Built for perfection.",
                 gallery_tag: "Gallery",
                 gallery_title: "A visual masterpiece.",
-                faq_tag: "Help",
-                faq_title: "Frequently Asked Questions",
-                faq_q1: "Is it safe to use Mio Client?",
-                faq_a1: "Yes, it is absolutely safe. The client is open-source, meaning anyone can check the code for malicious functions. We do not collect your data.",
-                faq_q2: "What are the system requirements?",
-                faq_a2: "Mio Client is incredibly lightweight and optimized. It runs smoothly on Windows 7, macOS 10.13+, and modern Linux distributions. You only need 2GB of RAM and any CPU from the last 10 years to play.",
-                faq_q3: "How to install and update the client?",
-                faq_a3: "Just download the archive for your OS, extract it to any folder, and run the executable file. Updates are released automatically or checked at startup.",
-                faq_q4: "Will new features be added?",
-                faq_a4: "Of course! We are actively working on the client and listen to the community. You can suggest your ideas in our Discord server or on GitHub.",
+                perf_tag: "Performance",
+                perf_title: "Unrivaled efficiency.",
+                perf_desc: "Engineered from the ground up to ensure your game runs smoother than ever before.",
+                stat1_label: "Frames Per Second",
+                stat1_desc: "Buttery smooth rendering",
+                stat2_label: "Memory Usage",
+                stat2_desc: "Incredibly lightweight",
+                stat3_label: "Startup Speed",
+                stat3_desc: "Instantaneous launch",
                 download_title: "Ready to play?",
                 download_desc: "Download Mio Client today and elevate your gaming experience.",
+                download_desc_h: "Download Mio Client today — no tricks, just treats.",
                 download_for: "Download for",
                 download_wrong: "Wrong OS? Choose your platform:",
                 download_latest: "Latest Version: 1.0.0 • 45.2 MB",
-                launcher_title: "Looking for a launcher?",
-                launcher_desc: "We also offer a lightweight launcher for auto-updating the client (Windows and Linux only).",
-                launcher_win: "Windows",
-                launcher_linux: "Linux",
-                footer_desc: "The next generation DDNet client.",
-                footer_links_title: "Navigation",
-                footer_socials_title: "Community",
-                footer_copy: "© 2026 Mio Client.",
-                footer_made: "Made for the DDNet community",
-                modal_free_title: "Free Plan",
-                modal_free_price: "0 ₽",
-                modal_free_f1: "Base version",
-                modal_free_f2: "Standard optimization",
-                modal_free_f3: "Basic modules",
-                modal_free_btn: "Download",
-                modal_premium_title: "Premium",
-                modal_premium_price: "50 ₽",
-                modal_premium_sub: "/mo",
-                modal_premium_f1: "All Free features",
-                modal_premium_f2: "Early access to new features",
-                modal_premium_f3: "Completely ad-free",
-                modal_premium_f4: "Exclusive cosmetics",
-                modal_premium_btn: "Buy Premium",
-                modal_premium_out: "Unfortunately, the Premium version is out of stock.",
-                modal_android_msg: "The Android version is not available yet, but might be in the future!",
+                footer_copy: "© 2026 Mio Client. All rights reserved.",
+                footer_h: "Trick or treat? Grab the client — get the treat.",
+                theme_h: "Halloween",
+                theme_c: "Classic theme",
                 feat: [
                     { icon: "fa-solid fa-wand-magic-sparkles", title: 'ClickGUI', desc: 'A beautifully designed, intuitive interface that allows you to navigate modules and settings with zero friction.' },
                     { icon: "fa-solid fa-bolt", title: 'Visual Effects', desc: 'Push the limits of the game engine with stunning, customizable visual enhancements and effects.' },
@@ -224,7 +284,150 @@
             }
         };
 
-        const FeatureCard = ({ icon, title, desc, index }) => {
+        const DOWNLOADS = {
+            Windows: './downloads/MioClient-Windows.zip',
+            macOS: './downloads/MioClient-macOS.zip',
+            Linux: './downloads/MioClient-Linux.zip',
+            Android: './downloads/MioClient-Android.apk',
+        };
+
+        /* ---------- Декор ---------- */
+
+        const Embers = ({ theme }) => {
+            const ref = useRef(null);
+            useEffect(() => {
+                const c = ref.current; const ctx = c.getContext('2d');
+                let w, h, raf;
+                const resize = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; };
+                resize();
+                window.addEventListener('resize', resize);
+                const col = THEME_COLORS[theme];
+                const spawn = (init) => ({
+                    x: Math.random() * w, y: init ? Math.random() * h : h + 10,
+                    r: Math.random() * 2.2 + 0.5, vy: 0.3 + Math.random() * 0.9, vx: (Math.random() - 0.5) * 0.3,
+                    ph: Math.random() * 6.28, a: 0.3 + Math.random() * 0.7,
+                    c: Math.random() > 0.25 ? col.p : col.s,
+                });
+                const ps = Array.from({ length: 70 }, () => spawn(true));
+                const draw = () => {
+                    ctx.clearRect(0, 0, w, h);
+                    for (let i = 0; i < ps.length; i++) {
+                        const p = ps[i];
+                        p.y -= p.vy; p.ph += 0.02; p.x += p.vx + Math.sin(p.ph) * 0.4;
+                        if (p.y < -10) { ps[i] = spawn(false); continue; }
+                        const alpha = p.a * Math.min(1, (p.y / h) * 1.6 + 0.2);
+                        ctx.beginPath();
+                        ctx.shadowBlur = 12; ctx.shadowColor = `rgba(${p.c},.9)`;
+                        ctx.fillStyle = `rgba(${p.c},${alpha})`;
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    raf = requestAnimationFrame(draw);
+                };
+                draw();
+                return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+            }, [theme]);
+            return <canvas ref={ref} className="fixed inset-0 pointer-events-none z-[1]" />;
+        };
+
+        const BatSvg = ({ size, flip }) => (
+            <span style={{ display: 'inline-block', transform: flip ? 'scaleX(-1)' : 'none' }}>
+                <svg className="bat-flap" width={size} height={size / 2} viewBox="0 0 64 32" fill="#0d0814" style={{ filter: 'drop-shadow(0 0 4px rgba(157,78,255,.55))' }}>
+                    <path d="M32 10 C28 4 20 2 2 6 C9 10 9 16 13 21 C17 16 22 16 26 21 C28 16 30 14 32 19 C34 14 36 16 38 21 C42 16 47 16 51 21 C55 16 55 10 62 6 C44 2 36 4 32 10 Z" />
+                    <path d="M28 9 L29 3 L32 8 L35 3 L36 9 Z" />
+                </svg>
+            </span>
+        );
+
+        const Bats = () => {
+            const bats = useMemo(() => Array.from({ length: 7 }, (_, i) => ({
+                id: i,
+                size: 26 + Math.random() * 34,
+                top: 6 + Math.random() * 62,
+                dur: 16 + Math.random() * 18,
+                delay: Math.random() * 14,
+                amp: 20 + Math.random() * 60,
+                dir: Math.random() > 0.5 ? 1 : -1,
+            })), []);
+            return (
+                <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
+                    {bats.map((b) => (
+                        <motion.div
+                            key={b.id}
+                            className="absolute"
+                            style={{ top: `${b.top}%`, left: 0 }}
+                            initial={{ x: b.dir > 0 ? '-12vw' : '112vw' }}
+                            animate={{ x: b.dir > 0 ? '112vw' : '-12vw', y: [0, -b.amp, b.amp / 2, -b.amp / 3, 0] }}
+                            transition={{
+                                x: { duration: b.dur, repeat: Infinity, delay: b.delay, ease: 'linear' },
+                                y: { duration: b.dur / 3, repeat: Infinity, ease: 'easeInOut' },
+                            }}
+                        >
+                            <BatSvg size={b.size} flip={b.dir < 0} />
+                        </motion.div>
+                    ))}
+                </div>
+            );
+        };
+
+        const Cobweb = ({ className = '', style }) => (
+            <svg className={className} style={style} width="220" height="220" viewBox="0 0 200 200" fill="none" stroke="rgba(255,255,255,.22)" strokeWidth="1">
+                <path d="M0 0 L200 0 M0 0 L185 70 M0 0 L150 150 M0 0 L70 185 M0 0 L0 200" />
+                <path d="M0 40 Q22 44 40 0" /><path d="M0 40 Q22 44 40 0" transform="translate(0 0)" />
+                <path d="M0 80 Q40 84 78 0" />
+                <path d="M0 120 Q58 112 110 0 " />
+                <path d="M0 165 Q80 140 150 0" />
+                <path d="M0 200 Q110 160 200 0" />
+            </svg>
+        );
+
+        const Graveyard = () => (
+            <svg viewBox="0 0 1200 130" preserveAspectRatio="none" className="w-full h-24 md:h-32 block" style={{ fill: 'rgb(var(--card))' }}>
+                <path d="M0 130 V96 Q150 74 300 94 T600 92 T900 96 T1200 84 V130Z" />
+                <path d="M70 100 v-38 a18 18 0 0 1 36 0 v38z" />
+                <path d="M130 98 v-26 a12 12 0 0 1 24 0 v26z" />
+                <path d="M410 96 v-30 a15 15 0 0 1 30 0 v30z" />
+                <path d="M820 96 v-40 a19 19 0 0 1 38 0 v40z" />
+                <path d="M1010 92 v-28 a13 13 0 0 1 26 0 v28z" />
+                <path d="M1060 94 h6 v-34 h-6 z M1050 70 h26 v6 h-26z" />
+                <path d="M610 94 C612 60 600 50 588 30 M604 66 C616 56 628 52 640 40 M600 50 C592 44 584 44 574 34" stroke="rgb(var(--card))" strokeWidth="5" fill="none" strokeLinecap="round" />
+            </svg>
+        );
+
+        /* ---------- Компоненты ---------- */
+
+        const Counter = ({ value, suffix = '', decimals = 0 }) => {
+            const ref = useRef(null);
+            const isInView = useInView(ref, { once: true });
+            const [displayValue, setDisplayValue] = useState((0).toFixed(decimals));
+            useEffect(() => {
+                if (isInView) {
+                    const duration = 2000; const start = Date.now();
+                    const animate = () => {
+                        const elapsed = Date.now() - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        setDisplayValue((progress * value).toFixed(decimals));
+                        if (progress < 1) requestAnimationFrame(animate);
+                    };
+                    requestAnimationFrame(animate);
+                }
+            }, [isInView, value, decimals]);
+            return <span ref={ref}>{displayValue}{suffix}</span>;
+        };
+
+        const SectionHead = ({ tag, title, desc, halloween }) => (
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
+                <p className="text-mio-primary font-medium mb-4 tracking-wide uppercase text-sm inline-flex items-center gap-3">
+                    {halloween && <i className="fa-solid fa-ghost text-xs opacity-80"></i>}
+                    {tag}
+                    {halloween && <i className="fa-solid fa-ghost text-xs opacity-80"></i>}
+                </p>
+                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text block">{title}</h2>
+                {desc && <p className="text-gray-500 max-w-2xl mx-auto mt-4 font-light text-lg">{desc}</p>}
+            </motion.div>
+        );
+
+        const FeatureCard = ({ icon, title, desc, index, halloween }) => {
             const ref = useRef(null);
             const mouseX = useMotionValue(0); const mouseY = useMotionValue(0);
             const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], ['7deg', '-7deg']), { stiffness: 150, damping: 20 });
@@ -236,48 +439,35 @@
             };
             const handleMouseLeave = () => { mouseX.set(0); mouseY.set(0); };
             return (
-                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: index * 0.1 }} ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }} className="group relative bg-mio-card border border-mio-border rounded-2xl p-8 transition-colors duration-300 hover:border-mio-primary/40">
+                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: index * 0.1 }} ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }} className="group relative bg-mio-card/90 border border-mio-border rounded-2xl p-8 transition-colors duration-300 hover:border-mio-primary/50 overflow-hidden">
                     <div className="absolute -inset-px bg-gradient-to-r from-mio-primary to-mio-secondary rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10"></div>
-                    <div className="mb-5 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-mio-primary/20 to-mio-secondary/20 border border-mio-border text-mio-primary text-2xl" style={{ transform: 'translateZ(40px)' }}><i className={icon}></i></div>
+                    {halloween && <Cobweb className="absolute top-0 right-0 opacity-40 group-hover:opacity-80 transition-opacity pointer-events-none" style={{ transform: 'scaleX(-1)', width: 110, height: 110 }} />}
+                    <div className="mb-5 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-mio-primary/25 to-mio-secondary/20 border border-mio-border text-mio-primary text-2xl" style={{ transform: 'translateZ(40px)' }}><i className={icon}></i></div>
                     <h3 className="text-xl font-semibold mb-2 text-white" style={{ transform: 'translateZ(30px)' }}>{title}</h3>
                     <p className="text-gray-400 font-light leading-relaxed" style={{ transform: 'translateZ(20px)' }}>{desc}</p>
                 </motion.div>
             );
         };
 
-        const FaqItem = ({ question, answer, index, activeIndex, setActiveIndex }) => {
-            const isActive = activeIndex === index;
+        const GalleryItem = ({ item }) => {
+            const [failed, setFailed] = useState(false);
             return (
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }} 
-                    whileInView={{ opacity: 1, y: 0 }} 
-                    viewport={{ once: true }} 
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={`glass border rounded-xl overflow-hidden transition-all duration-300 ${isActive ? 'border-mio-primary/30 shadow-[0_0_30px_rgba(168,85,247,0.05)]' : 'glass-hover'}`}
-                >
-                    <button 
-                        onClick={() => setActiveIndex(isActive ? null : index)} 
-                        className="w-full flex items-center justify-between p-6 text-left"
-                    >
-                        <span className="text-lg font-medium text-gray-200 pr-4 tracking-tight">{question}</span>
-                        <motion.div animate={{ rotate: isActive ? 180 : 0 }} transition={{ duration: 0.3 }}>
-                            <i className="fa-solid fa-chevron-down text-mio-primary text-sm"></i>
-                        </motion.div>
-                    </button>
-                    <AnimatePresence initial={false}>
-                        {isActive && (
-                            <motion.div 
-                                initial={{ height: 0, opacity: 0 }} 
-                                animate={{ height: "auto", opacity: 1 }} 
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3, ease: "easeInOut" }}
-                                className="overflow-hidden"
-                            >
-                                <p className="px-6 pb-6 text-gray-500 font-light leading-relaxed text-[15px]">{answer}</p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.div>
+                <div className="relative flex-shrink-0 w-[90%] md:w-[700px] snap-center group">
+                    <div className="relative rounded-2xl overflow-hidden border border-mio-border bg-mio-card/60 backdrop-blur-sm h-[400px] transition-all duration-300 group-hover:border-mio-primary/60 group-hover:shadow-[0_0_50px_rgb(var(--p)/0.25)]">
+                        <div className="absolute inset-0 bg-gradient-to-br from-mio-primary/10 to-mio-secondary/10 z-10 pointer-events-none"></div>
+                        <div className="absolute inset-0 z-10 pointer-events-none" style={{ boxShadow: 'inset 0 0 80px rgba(0,0,0,.45)' }}></div>
+                        <div className="h-full w-full flex items-center justify-center relative overflow-hidden">
+                            {failed ? (
+                                <div className="text-center text-gray-600">
+                                    <i className="fa-solid fa-ghost text-5xl mb-3 text-mio-primary/50"></i>
+                                    <p className="text-sm">{item}.png</p>
+                                </div>
+                            ) : (
+                                <img src={`./${item}.png`} alt={`Mio Client Screenshot ${item}`} onError={() => setFailed(true)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                            )}
+                        </div>
+                    </div>
+                </div>
             );
         };
 
@@ -285,17 +475,34 @@
             const [scrolled, setScrolled] = useState(false);
             const [userOS, setUserOS] = useState('Windows');
             const [lang, setLang] = useState('EN');
-            const [showPricing, setShowPricing] = useState(false);
-            const [premiumSoldOut, setPremiumSoldOut] = useState(false);
-            const [showAndroidMsg, setShowAndroidMsg] = useState(false);
-            const [activeFaq, setActiveFaq] = useState(null);
+            const [theme, setTheme] = useState(() => {
+                try { return localStorage.getItem('mio-theme') || 'halloween'; } catch (e) { return 'halloween'; }
+            });
             const t = translations[lang];
-            
+            const hw = theme === 'halloween';
+
+            useEffect(() => {
+                document.documentElement.dataset.theme = theme;
+                try { localStorage.setItem('mio-theme', theme); } catch (e) {}
+            }, [theme]);
+
+            // дни до Хэллоуина
+            const daysLeft = useMemo(() => {
+                const now = new Date();
+                const target = new Date(now.getFullYear(), 9, 31, 23, 59, 59);
+                const d = Math.ceil((target - now) / 86400000);
+                return d;
+            }, []);
+
             const heroX = useMotionValue(0); const heroY = useMotionValue(0);
             const heroXSpring = useSpring(heroX, { stiffness: 50, damping: 20 }); const heroYSpring = useSpring(heroY, { stiffness: 50, damping: 20 });
-            const handleHeroMouseMove = (e) => {
-                heroX.set((e.clientX / window.innerWidth - 0.5) * 20);
-                heroY.set((e.clientY / window.innerHeight - 0.5) * 20);
+            const cursorX = useMotionValue(-600); const cursorY = useMotionValue(-600);
+            const cursorXS = useSpring(cursorX, { stiffness: 120, damping: 25 }); const cursorYS = useSpring(cursorY, { stiffness: 120, damping: 25 });
+            const handleMouseMove = (e) => {
+                heroX.set((e.clientX / window.innerWidth - 0.5) * 40);
+                heroY.set((e.clientY / window.innerHeight - 0.5) * 40);
+                cursorX.set(e.clientX - 260);
+                cursorY.set(e.clientY - 260);
             };
 
             useEffect(() => {
@@ -306,8 +513,8 @@
 
             useEffect(() => {
                 const platform = navigator.userAgent.toLowerCase();
-                if (platform.includes('mac')) setUserOS('macOS');
-                else if (platform.includes('android')) setUserOS('Android');
+                if (platform.includes('android')) setUserOS('Android');
+                else if (platform.includes('mac')) setUserOS('macOS');
                 else if (platform.includes('linux')) setUserOS('Linux');
                 else setUserOS('Windows');
             }, []);
@@ -319,300 +526,224 @@
                 return 'fa-windows';
             };
 
-            const getDownloadLink = (os) => {
-                if (os === 'macOS') return './downloads/Mac-MioClient.zip';
-                if (os === 'Linux') return './downloads/Linux-MioClient.zip';
-                if (os === 'Android') return '#'; 
-                return './downloads/Win-MioClient.zip'; 
-            };
-
-            const faqItems = [
-                { q: t.faq_q1, a: t.faq_a1 },
-                { q: t.faq_q2, a: t.faq_a2 },
-                { q: t.faq_q3, a: t.faq_a3 },
-                { q: t.faq_q4, a: t.faq_a4 }
-            ];
-
-            const handleFreeDownload = (e) => {
-                if (userOS === 'Android') {
-                    e.preventDefault();
-                    setShowAndroidMsg(true);
-                }
-            };
-
-            const handlePremiumClick = () => {
-                if (userOS === 'Android') {
-                    setShowAndroidMsg(true);
-                } else {
-                    setPremiumSoldOut(true);
-                }
-            };
-
-            const closeModal = () => {
-                setShowPricing(false);
-                setPremiumSoldOut(false);
-                setShowAndroidMsg(false);
-            };
+            const showCountdown = daysLeft >= 0 && daysLeft <= 60;
 
             return (
-                <div className="relative min-h-screen bg-mio-bg text-white overflow-hidden" onMouseMove={handleHeroMouseMove}>
+                <div className="relative min-h-screen bg-mio-bg text-white overflow-hidden" onMouseMove={handleMouseMove}>
+                    {/* Фон */}
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
-                        <div className="absolute top-[-10%] left-[10%] w-[500px] h-[500px] bg-mio-primary/10 rounded-full filter blur-[150px] animate-blob"></div>
-                        <div className="absolute top-[20%] right-[-5%] w-[400px] h-[400px] bg-mio-secondary/10 rounded-full filter blur-[150px] animate-blob"></div>
+                        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-mio-primary/20 rounded-full filter blur-[120px] animate-blob"></div>
+                        <div className="absolute top-[30%] right-[-10%] w-[400px] h-[400px] bg-mio-secondary/20 rounded-full filter blur-[120px] animate-blob"></div>
+                        <div className="absolute bottom-[-10%] left-[30%] w-[600px] h-[600px] bg-mio-secondary/10 rounded-full filter blur-[120px] animate-blob"></div>
                     </div>
+                    <Embers theme={theme} />
+                    <motion.div className="cursor-glow hidden md:block" style={{ x: cursorXS, y: cursorYS }} />
+                    {hw && (
+                        <>
+                            <div className="fog"></div>
+                            <div className="fog two"></div>
+                            <div className="vignette"></div>
+                            <Bats />
+                            <Cobweb className="fixed top-0 left-0 z-[4] pointer-events-none" style={{ width: 200, height: 200 }} />
+                            <Cobweb className="fixed top-0 right-0 z-[4] pointer-events-none hidden md:block" style={{ width: 160, height: 160, transform: 'scaleX(-1)' }} />
+                        </>
+                    )}
 
-                    <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[90%] md:max-w-[800px] py-2' : 'w-[90%] md:max-w-[800px] py-3'}`}>
-                        <div className={`flex items-center justify-between px-6 rounded-full glass ${scrolled ? 'shadow-[0_10px_40px_rgba(0,0,0,0.5)]' : ''}`}>
-                            <div className="flex items-center gap-8 whitespace-nowrap">
-                                <div className="text-base md:text-lg font-bold tracking-tight">
-                                    <span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span>
+                    {/* Навбар */}
+                    <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${scrolled ? 'w-[95%] md:max-w-[900px] py-2' : 'w-[95%] md:max-w-[900px] py-3'}`}>
+                        <div className={`flex items-center justify-between px-4 sm:px-6 py-1 rounded-full border border-mio-border bg-mio-bg/70 backdrop-blur-xl ${scrolled ? 'shadow-[0_8px_30px_rgb(0,0,0,0.5)]' : ''}`}>
+                            <div className="flex items-center gap-4 md:gap-8 lg:gap-10 whitespace-nowrap">
+                                <div className="text-base md:text-lg font-bold tracking-wider flex items-center gap-2">
+                                    {hw && <span className="pumpkin-pulse text-base">🎃</span>}
+                                    <span><span className="text-white">Mio</span><span className="text-grad"> Client</span></span>
                                 </div>
-                                <div className="hidden md:flex items-center gap-6 text-xs md:text-sm font-medium text-gray-500">
-                                    <a href="#features" className="hover:text-white transition-colors tracking-wide">{t.nav_features}</a>
-                                    <a href="#faq" className="hover:text-white transition-colors tracking-wide">{t.nav_faq}</a>
-                                    <a href="#gallery" className="hover:text-white transition-colors tracking-wide">{t.nav_gallery}</a>
-                                    <a href="#download" className="hover:text-white transition-colors tracking-wide">{t.nav_download}</a>
+                                <div className="hidden md:flex items-center gap-4 md:gap-5 lg:gap-6 text-xs md:text-sm font-medium text-gray-400">
+                                    <a href="#features" className="hover:text-white transition-colors">{t.nav_features}</a>
+                                    <a href="#performance" className="hover:text-white transition-colors">{t.nav_performance}</a>
+                                    <a href="#gallery" className="hover:text-white transition-colors">{t.nav_gallery}</a>
+                                    <a href="#download" className="hover:text-white transition-colors">{t.nav_download}</a>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-5 whitespace-nowrap">
-                                <a href="https://t.me/ddnetsam" target="_blank" className="text-gray-500 hover:text-white transition-colors text-sm"><i className="fa-brands fa-telegram"></i></a>
-                                <a href="#" target="_blank" className="text-gray-500 hover:text-white transition-colors text-sm"><i className="fa-brands fa-discord"></i></a>
-                                <a href="#" target="_blank" className="text-gray-500 hover:text-white transition-colors text-sm"><i className="fa-brands fa-github"></i></a>
+                            <div className="flex items-center gap-3 md:gap-4 whitespace-nowrap">
+                                <a href="https://t.me/ddnetsam" target="_blank" rel="noopener" aria-label="Telegram" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-telegram"></i></a>
+                                <a href="#" target="_blank" rel="noopener" aria-label="Discord" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-discord"></i></a>
+                                <a href="#" target="_blank" rel="noopener" aria-label="GitHub" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-github"></i></a>
                             </div>
                         </div>
                     </motion.nav>
 
-                    <motion.div 
-                        initial={{ y: -50, opacity: 0 }} 
-                        animate={{ y: 0, opacity: 1 }} 
+                    {/* Переключатели языка и темы */}
+                    <motion.div
+                        initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        className="fixed top-6 right-6 z-40 hidden md:block"
+                        className="fixed top-[84px] right-4 md:right-6 z-40 flex flex-col items-end gap-2"
                     >
-                        <div className="flex items-center gap-1 glass rounded-full p-1">
-                            <button onClick={() => setLang('RU')} className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${lang === 'RU' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white'}`}>RU</button>
-                            <button onClick={() => setLang('EN')} className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${lang === 'EN' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white'}`}>EN</button>
+                        <div className="flex items-center gap-1 bg-mio-card/90 border border-mio-border rounded-full p-1 shadow-[0_4px_20px_rgb(0,0,0,0.4)] backdrop-blur-sm">
+                            {['RU', 'EN'].map((l) => (
+                                <button key={l} onClick={() => setLang(l)} className={`lang-btn px-4 py-1 text-xs font-bold rounded-full ${lang === l ? 'bg-mio-primary text-white shadow-[0_0_15px_rgb(var(--p)/0.5)]' : 'text-gray-400 hover:text-white'}`}>{l}</button>
+                            ))}
                         </div>
+                        <button
+                            onClick={() => setTheme(hw ? 'classic' : 'halloween')}
+                            className="lang-btn flex items-center gap-2 bg-mio-card/90 border border-mio-border rounded-full pl-3 pr-4 py-1.5 text-xs font-semibold text-gray-300 hover:text-white hover:border-mio-primary/60 backdrop-blur-sm shadow-[0_4px_20px_rgb(0,0,0,0.4)]"
+                            title={hw ? t.theme_c : t.theme_h}
+                        >
+                            <span className={hw ? 'pumpkin-pulse' : ''}>{hw ? '🎃' : '✨'}</span>
+                            {hw ? t.theme_c : t.theme_h}
+                        </button>
                     </motion.div>
 
+                    {/* Hero */}
                     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 z-10">
+                        {hw && (
+                            <div className="spider hidden sm:flex" style={{ left: '11%' }}>
+                                <div className="thread"></div>
+                                <i className="fa-solid fa-spider"></i>
+                            </div>
+                        )}
                         <motion.div style={{ x: heroXSpring, y: heroYSpring }} className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none">
-                            <div className="absolute top-[20%] left-[20%] w-32 h-32 border border-white/5 rounded-3xl rotate-12 backdrop-blur-sm animate-float-slow"></div>
-                            <div className="absolute bottom-[25%] right-[15%] w-24 h-24 border border-white/5 rounded-full backdrop-blur-sm animate-float-slow"></div>
+                            {hw ? (
+                                <>
+                                    <div className="moon absolute top-[17%] right-[10%] hidden md:block animate-float-slow"></div>
+                                    <i className="fa-solid fa-ghost absolute top-[34%] left-[17%] text-6xl text-white/10 animate-float-slow" style={{ filter: 'drop-shadow(0 0 20px rgb(var(--g) / .35))' }}></i>
+                                    <i className="fa-solid fa-skull absolute bottom-[22%] left-[10%] text-4xl text-white/5 animate-float-slow"></i>
+                                    <span className="pumpkin-glow absolute bottom-[20%] right-[12%] text-6xl md:text-7xl">🎃</span>
+                                    <span className="pumpkin-glow absolute bottom-[34%] right-[26%] text-3xl" style={{ animationDelay: '1.2s' }}>🎃</span>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="absolute top-[20%] left-[20%] w-32 h-32 border border-mio-primary/30 rounded-3xl rotate-12 backdrop-blur-sm animate-float-slow bg-mio-primary/5"></div>
+                                    <div className="absolute bottom-[25%] right-[15%] w-24 h-24 border border-mio-secondary/30 rounded-full backdrop-blur-sm animate-float-slow bg-mio-secondary/5"></div>
+                                    <div className="absolute top-[30%] right-[25%] w-16 h-16 border border-white/10 rotate-45 backdrop-blur-sm animate-float-slow"></div>
+                                </>
+                            )}
                         </motion.div>
-                        
-                        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} className="text-center max-w-5xl">
-                            <div className="inline-block px-4 py-1.5 mb-10 rounded-full glass text-[10px] font-medium text-gray-400 tracking-[0.2em] uppercase">{t.hero_version}</div>
-                            <h1 className="text-7xl md:text-[9rem] lg:text-[11rem] font-extrabold tracking-[-0.05em] mb-8 leading-[0.85] interactive-text">
-                                <span className="text-white">Mio</span>{" "}<span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent">Client</span>
+
+                        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} className="text-center max-w-4xl">
+                            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="mb-8 relative inline-block">
+                                <img src="Icon.png" alt="Mio Client Logo" className="w-28 h-28 rounded-2xl mx-auto border border-mio-border shadow-[0_0_60px_rgb(var(--p)/0.4)]" />
+                                {hw && <span className="pumpkin-glow absolute -top-5 -right-5 text-4xl" style={{ transform: 'rotate(14deg)' }}>🎃</span>}
+                            </motion.div>
+
+                            <div className="flex flex-col items-center gap-3 mb-8">
+                                <div className="inline-block px-4 py-1.5 rounded-full border border-mio-border bg-mio-card/60 backdrop-blur-sm text-xs font-medium text-gray-300 tracking-wide">
+                                    {hw ? t.hero_version_h : t.hero_version}
+                                </div>
+                                {hw && showCountdown && (
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-mio-primary/40 bg-mio-primary/10 text-xs font-semibold text-mio-primary">
+                                        <i className="fa-solid fa-skull"></i>
+                                        {daysLeft === 0 ? t.countdown_today : t.countdown(daysLeft)}
+                                    </div>
+                                )}
+                            </div>
+
+                            <h1 className="font-spooky text-7xl md:text-9xl lg:text-[10rem] font-extrabold tracking-tighter mb-6 leading-none interactive-text">
+                                <span className="text-white">Mio</span>{" "}
+                                <span className={`text-grad ${hw ? 'flicker' : ''}`}>Client</span>
                             </h1>
-                            <h2 className="text-xl md:text-3xl font-light text-gray-400 mb-6 tracking-tight">{t.hero_subtitle}</h2>
-                            <p className="text-gray-600 max-w-xl mx-auto mb-12 font-light text-base md:text-lg leading-relaxed">{t.hero_desc}</p>
-                            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                                <a href="#download" className="btn-premium inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-white font-semibold text-sm tracking-wide">
-                                    <i className="fa-solid fa-download text-xs"></i> {t.btn_download}
-                                </a>
-                                {/* Заменили GitHub на Support (Поддержать) */}
-                                <a href="https://dalink.to/samporter" target="_blank" className="glass glass-hover inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-gray-300 font-semibold text-sm transition-all duration-300 tracking-wide">
-                                    <i className="fa-solid fa-heart text-xs text-mio-secondary"></i> {t.btn_support}
-                                </a>
+                            <h2 className="text-2xl md:text-3xl font-light text-gray-300 mb-4 tracking-tight interactive-text">{t.hero_subtitle}</h2>
+                            <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{t.hero_desc}</p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <a href="#download" className="glow-primary relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-all duration-300 hover:scale-105"><i className="fa-solid fa-download"></i> {t.btn_download}</a>
+                                <a href="#" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/60 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-brands fa-github"></i> {t.btn_github}</a>
+                                <a href="https://dalink.to/samporter" target="_blank" rel="noopener" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/60 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-solid fa-heart text-mio-secondary"></i> {t.btn_support}</a>
                             </div>
                         </motion.div>
                     </section>
 
+                    {/* Features */}
                     <section id="features" className="relative py-32 px-6 z-10">
                         <div className="max-w-7xl mx-auto">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-20">
-                                <p className="text-mio-primary font-medium mb-4 tracking-[0.2em] uppercase text-[10px]">{t.features_tag}</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">{t.features_title}</h2>
-                            </motion.div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{t.feat.map((feature, i) => (<FeatureCard key={i} {...feature} index={i} />))}</div>
+                            <SectionHead tag={t.features_tag} title={t.features_title} halloween={hw} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {t.feat.map((feature, i) => (<FeatureCard key={i} {...feature} index={i} halloween={hw} />))}
+                            </div>
                         </div>
                     </section>
 
+                    {/* Gallery */}
                     <section id="gallery" className="relative py-32 z-10">
-                        <div className="max-w-7xl mx-auto px-6 mb-16">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center">
-                                <p className="text-mio-primary font-medium mb-4 tracking-[0.2em] uppercase text-[10px]">{t.gallery_tag}</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">{t.gallery_title}</h2>
-                            </motion.div>
+                        <div className="max-w-7xl mx-auto px-6">
+                            <SectionHead tag={t.gallery_tag} title={t.gallery_title} halloween={hw} />
                         </div>
-                        <div className="flex gap-4 overflow-x-auto px-6 pb-6 snap-x snap-mandatory">
-                            {[1, 2, 3, 4, 5].map((item) => (
-                                <div key={item} className="relative flex-shrink-0 w-[90%] md:w-[700px] snap-center group">
-                                    <div className="relative rounded-2xl overflow-hidden glass h-[400px] transition-all duration-300 group-hover:border-mio-primary/20">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-mio-bg via-transparent to-transparent z-10 pointer-events-none"></div>
-                                        <div className="h-full w-full flex items-center justify-center relative overflow-hidden">
-                                            <img src={`./${item}.png`} alt={`Mio Client Screenshot ${item}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                        <div className="gallery-scroll flex gap-6 overflow-x-auto px-6 pb-6 snap-x snap-mandatory">
+                            {[1, 2, 3, 4, 5].map((item) => <GalleryItem key={item} item={item} />)}
                         </div>
                     </section>
 
-                    <section id="faq" className="relative py-32 px-6 z-10">
-                        <div className="max-w-3xl mx-auto">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-20">
-                                <p className="text-mio-primary font-medium mb-4 tracking-[0.2em] uppercase text-[10px]">{t.faq_tag}</p>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight interactive-text">{t.faq_title}</h2>
-                            </motion.div>
-                            <div className="flex flex-col gap-3">
-                                {faqItems.map((item, i) => (
-                                    <FaqItem key={i} question={item.q} answer={item.a} index={i} activeIndex={activeFaq} setActiveIndex={setActiveFaq} />
+                    {/* Performance */}
+                    <section id="performance" className="relative py-32 px-6 z-10">
+                        <div className="max-w-6xl mx-auto">
+                            <SectionHead tag={t.perf_tag} title={t.perf_title} desc={t.perf_desc} halloween={hw} />
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {[
+                                    { value: 360, suffix: '+', label: t.stat1_label, desc: t.stat1_desc, icon: 'fa-bolt' },
+                                    { value: 45, suffix: 'MB', label: t.stat2_label, desc: t.stat2_desc, icon: 'fa-feather' },
+                                    { value: 0.8, suffix: 's', label: t.stat3_label, desc: t.stat3_desc, decimals: 1, icon: 'fa-hourglass-half' }
+                                ].map((stat, i) => (
+                                    <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }} className="relative p-10 rounded-2xl border border-mio-border bg-mio-card/70 backdrop-blur-sm text-center overflow-hidden">
+                                        <div className="absolute -top-20 -left-20 w-40 h-40 bg-mio-primary/25 rounded-full filter blur-3xl"></div>
+                                        <i className={`fa-solid ${stat.icon} absolute top-5 right-5 text-mio-primary/30 text-xl`}></i>
+                                        <div className="relative z-10">
+                                            <h3 className="text-5xl md:text-6xl font-extrabold mb-2 tracking-tighter bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent"><Counter value={stat.value} suffix={stat.suffix} decimals={stat.decimals || 0} /></h3>
+                                            <p className="text-xl font-medium text-white mb-1">{stat.label}</p>
+                                            <p className="text-gray-500 font-light">{stat.desc}</p>
+                                        </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>
                     </section>
 
+                    {/* Download */}
                     <section id="download" className="relative py-32 px-6 z-10 flex flex-col items-center justify-center text-center">
                         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-mio-primary to-mio-secondary blur-[100px] opacity-10 rounded-full"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-mio-primary to-mio-secondary blur-3xl opacity-25 rounded-full"></div>
                             <div className="relative z-10">
+                                {hw && <div className="mb-4 text-6xl"><span className="pumpkin-glow">🎃</span></div>}
                                 <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 interactive-text">{t.download_title}</h2>
-                                <p className="text-gray-500 max-w-xl mx-auto mb-12 font-light text-lg">{t.download_desc}</p>
-                                
-                                <button onClick={() => setShowPricing(true)} className="btn-premium inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl text-white font-bold text-lg mb-8">
+                                <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{hw ? t.download_desc_h : t.download_desc}</p>
+
+                                <a href={DOWNLOADS[userOS]} className="glow-primary-lg relative inline-flex items-center justify-center gap-4 px-12 py-6 rounded-2xl bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-bold text-xl mb-8 transition-all duration-300 hover:scale-105">
                                     <i className={`fa-brands ${getOSIcon(userOS)}`}></i> {t.download_for} {userOS}
-                                </button>
+                                </a>
 
-                                <div className="flex flex-col items-center gap-4 text-gray-500">
-                                    <p className="text-xs text-gray-600 tracking-wide uppercase">{t.download_wrong}</p>
-                                    <div className="flex flex-wrap justify-center gap-8 text-sm font-medium">
-                                        <button onClick={() => { setUserOS('Windows'); setShowPricing(true); }} className="text-gray-500 hover:text-white transition-colors tracking-wide"><i className="fa-brands fa-windows mr-2 text-xs"></i>Windows</button>
-                                        <button onClick={() => { setUserOS('macOS'); setShowPricing(true); }} className="text-gray-500 hover:text-white transition-colors tracking-wide"><i className="fa-brands fa-apple mr-2 text-xs"></i>macOS</button>
-                                        <button onClick={() => { setUserOS('Linux'); setShowPricing(true); }} className="text-gray-500 hover:text-white transition-colors tracking-wide"><i className="fa-brands fa-linux mr-2 text-xs"></i>Linux</button>
-                                        <button onClick={() => { setUserOS('Android'); setShowPricing(true); }} className="text-gray-500 hover:text-white transition-colors tracking-wide"><i className="fa-brands fa-android mr-2 text-xs"></i>Android</button>
+                                <div className="flex flex-col items-center gap-3 text-gray-400">
+                                    <p className="text-sm text-gray-500">{t.download_wrong}</p>
+                                    <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-lg font-medium">
+                                        <a href={DOWNLOADS.Windows} className={`platform-link ${userOS === 'Windows' ? 'active' : ''}`}><i className="fa-brands fa-windows"></i> Windows</a>
+                                        <a href={DOWNLOADS.macOS} className={`platform-link ${userOS === 'macOS' ? 'active' : ''}`}><i className="fa-brands fa-apple"></i> macOS</a>
+                                        <a href={DOWNLOADS.Linux} className={`platform-link ${userOS === 'Linux' ? 'active' : ''}`}><i className="fa-brands fa-linux"></i> Linux</a>
+                                        <a href={DOWNLOADS.Android} className={`platform-link ${userOS === 'Android' ? 'active' : ''}`}><i className="fa-brands fa-android"></i> Android</a>
                                     </div>
-                                    <p className="text-xs text-gray-700 mt-4 tracking-wide">{t.download_latest}</p>
-                                </div>
-
-                                <div className="mt-20 pt-10 border-t border-white/5 max-w-md mx-auto">
-                                    <p className="text-gray-600 text-[10px] font-medium tracking-[0.2em] uppercase mb-4">{t.launcher_title}</p>
-                                    <p className="text-gray-700 text-xs mb-6">{t.launcher_desc}</p>
-                                    <div className="flex flex-wrap justify-center gap-3 text-xs font-medium">
-                                        <a href="./downloads/MioLauncher-Windows.zip" className="glass glass-hover inline-flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:text-white transition-all">
-                                            <i className="fa-brands fa-windows"></i> {t.launcher_win}
-                                        </a>
-                                        <a href="./downloads/MioLauncher-Linux.zip" className="glass glass-hover inline-flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 hover:text-white transition-all">
-                                            <i className="fa-brands fa-linux"></i> {t.launcher_linux}
-                                        </a>
-                                    </div>
+                                    <p className="text-sm text-gray-600 mt-4">{t.download_latest}</p>
                                 </div>
                             </div>
                         </motion.div>
                     </section>
 
-                    <footer className="relative pt-20 pb-10 px-6 border-t border-white/5 z-10">
-                        <div className="max-w-7xl mx-auto">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-                                <div className="flex flex-col gap-4">
-                                    <div className="text-xl font-bold tracking-tight">
-                                        <span className="text-white">Mio</span><span className="bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent"> Client</span>
-                                    </div>
-                                    <p className="text-gray-600 font-light text-xs max-w-xs leading-relaxed">
-                                        {t.footer_desc}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <p className="text-gray-700 uppercase text-[10px] font-bold tracking-[0.2em] mb-2">{t.footer_links_title}</p>
-                                    <a href="#features" className="text-gray-500 hover:text-white transition-colors text-sm">{t.nav_features}</a>
-                                    <a href="#faq" className="text-gray-500 hover:text-white transition-colors text-sm">{t.nav_faq}</a>
-                                    <a href="#gallery" className="text-gray-500 hover:text-white transition-colors text-sm">{t.nav_gallery}</a>
-                                    <a href="#download" className="text-gray-500 hover:text-white transition-colors text-sm">{t.nav_download}</a>
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <p className="text-gray-700 uppercase text-[10px] font-bold tracking-[0.2em] mb-2">{t.footer_socials_title}</p>
-                                    <div className="flex gap-3">
-                                        <a href="https://t.me/ddnetsam" target="_blank" className="w-9 h-9 rounded-full glass glass-hover flex items-center justify-center text-gray-500 hover:text-white transition-all text-xs">
-                                            <i className="fa-brands fa-telegram"></i>
-                                        </a>
-                                        <a href="#" target="_blank" className="w-9 h-9 rounded-full glass glass-hover flex items-center justify-center text-gray-500 hover:text-white transition-all text-xs">
-                                            <i className="fa-brands fa-discord"></i>
-                                        </a>
-                                        <a href="#" target="_blank" className="w-9 h-9 rounded-full glass glass-hover flex items-center justify-center text-gray-500 hover:text-white transition-all text-xs">
-                                            <i className="fa-brands fa-github"></i>
-                                        </a>
-                                        <a href="https://dalink.to/samporter" target="_blank" className="w-9 h-9 rounded-full glass glass-hover flex items-center justify-center text-gray-500 hover:text-white transition-all text-xs">
-                                            <i className="fa-solid fa-heart"></i>
-                                        </a>
-                                    </div>
-                                </div>
+                    {/* Footer */}
+                    <div className="relative z-10 -mb-px">
+                        {hw && <Graveyard />}
+                    </div>
+                    <footer className="relative py-12 px-6 border-t border-mio-border z-10 bg-mio-card/80 backdrop-blur-sm">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="text-lg font-bold tracking-wider flex items-center gap-2">
+                                {hw && <span className="pumpkin-pulse">🎃</span>}
+                                <span><span className="text-white">Mio</span><span className="text-grad"> Client</span></span>
                             </div>
-                            <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-                                <p className="text-gray-700 text-[10px] tracking-[0.1em]">{t.footer_copy}</p>
-                                <p className="text-gray-800 text-[10px] tracking-[0.1em]">{t.footer_made}</p>
+                            <div className="flex items-center gap-8 text-2xl text-gray-400">
+                                <a href="https://t.me/ddnetsam" target="_blank" rel="noopener" aria-label="Telegram" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-telegram"></i></a>
+                                <a href="#" target="_blank" rel="noopener" aria-label="Discord" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-discord"></i></a>
+                                <a href="#" target="_blank" rel="noopener" aria-label="GitHub" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-github"></i></a>
+                                <a href="https://dalink.to/samporter" target="_blank" rel="noopener" aria-label="Support" className="hover:text-mio-secondary transition-colors"><i className="fa-solid fa-heart"></i></a>
+                            </div>
+                            <div className="text-center md:text-right">
+                                <p className="text-sm text-gray-500">{t.footer_copy}</p>
+                                {hw && <p className="text-xs text-mio-primary/80 mt-1">{t.footer_h}</p>}
                             </div>
                         </div>
                     </footer>
-
-                    <AnimatePresence>
-                        {showPricing && (
-                            <motion.div 
-                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                onClick={closeModal}
-                                className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-center justify-center p-4"
-                            >
-                                <motion.div 
-                                    initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="relative glass rounded-3xl p-8 md:p-12 max-w-4xl w-full flex flex-col gap-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
-                                >
-                                    <button onClick={closeModal} className="absolute top-6 right-6 text-gray-600 hover:text-white text-sm transition-colors z-10">
-                                        <i className="fa-solid fa-xmark text-lg"></i>
-                                    </button>
-
-                                    <div className="flex flex-col md:flex-row gap-6">
-                                        <div className="flex-1 glass rounded-2xl p-8 flex flex-col items-center text-center">
-                                            <i className="fa-solid fa-seedling text-mio-primary text-2xl mb-6"></i>
-                                            <h3 className="text-xl font-bold mb-2 tracking-tight">{t.modal_free_title}</h3>
-                                            <p className="text-3xl font-extrabold mb-8 text-gray-300 tracking-tight">{t.modal_free_price}</p>
-                                            <div className="flex flex-col gap-3 text-gray-500 text-left w-full mb-8 flex-1">
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-primary text-xs"></i> {t.modal_free_f1}</p>
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-primary text-xs"></i> {t.modal_free_f2}</p>
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-primary text-xs"></i> {t.modal_free_f3}</p>
-                                            </div>
-                                            <a href={userOS === 'Android' ? '#' : getDownloadLink(userOS)} onClick={handleFreeDownload} className="w-full glass glass-hover inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-white font-semibold text-sm transition-all">
-                                                <i className={`fa-brands ${getOSIcon(userOS)} text-xs`}></i> {t.modal_free_btn} {userOS}
-                                            </a>
-                                        </div>
-
-                                        <div className="flex-1 relative rounded-2xl p-8 flex flex-col items-center text-center border border-mio-primary/30 shadow-[0_0_40px_rgba(168,85,247,0.1)] overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-b from-mio-primary/10 to-transparent -z-10"></div>
-                                            <div className="absolute top-0 right-0 bg-mio-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl tracking-wider">PRO</div>
-                                            <i className="fa-solid fa-crown text-mio-secondary text-2xl mb-6"></i>
-                                            <h3 className="text-xl font-bold mb-2 tracking-tight bg-gradient-to-r from-mio-primary to-mio-secondary bg-clip-text text-transparent">{t.modal_premium_title}</h3>
-                                            <p className="text-3xl font-extrabold mb-8 text-white tracking-tight">{t.modal_premium_price}<span className="text-sm font-light text-gray-500">{t.modal_premium_sub}</span></p>
-                                            <div className="flex flex-col gap-3 text-gray-300 text-left w-full mb-8 flex-1">
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-secondary text-xs"></i> {t.modal_premium_f1}</p>
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-secondary text-xs"></i> {t.modal_premium_f2}</p>
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-secondary text-xs"></i> {t.modal_premium_f3}</p>
-                                                <p className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-secondary text-xs"></i> {t.modal_premium_f4}</p>
-                                            </div>
-                                            <button onClick={handlePremiumClick} className="btn-premium w-full inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-white font-semibold text-sm">
-                                                <i className="fa-solid fa-bolt text-xs"></i> {t.modal_premium_btn}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="w-full">
-                                        <AnimatePresence>
-                                            {premiumSoldOut && (
-                                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden w-full">
-                                                    <p className="text-mio-secondary text-xs mt-2 text-center font-medium tracking-wide">{t.modal_premium_out}</p>
-                                                </motion.div>
-                                            )}
-                                            {showAndroidMsg && (
-                                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden w-full">
-                                                    <p className="text-mio-secondary text-xs mt-2 text-center font-medium tracking-wide">{t.modal_android_msg}</p>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </div>
             );
         }
