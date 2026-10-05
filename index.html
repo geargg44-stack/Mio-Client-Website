@@ -202,7 +202,6 @@
                 hero_subtitle: "Клиент нового поколения для DDNet.",
                 hero_desc: "Испытайте непревзойденную производительность, потрясающую визуализацию и тщательно продуманный интерфейс, созданный для будущего.",
                 btn_download: "Скачать сейчас",
-                btn_github: "Смотреть на GitHub",
                 btn_support: "Поддержать",
                 features_tag: "Возможности",
                 features_title: "Создан для совершенства.",
@@ -233,7 +232,7 @@
                     { icon: "fa-solid fa-palette", title: 'Кастомизация', desc: 'Настройте каждый аспект клиента. От тем до биндов, сделайте Mio по-настоящему вашим до пикселя.' },
                     { icon: "fa-solid fa-fire", title: 'Производительность', desc: 'Высокооптимизированная кодовая база, обеспечивающая максимальный FPS и минимальное потребление памяти даже на старых ПК.' },
                     { icon: "fa-solid fa-gear", title: 'Современный UI', desc: 'Создан с использованием футуристического дизайна, предлагающий элегантный, стеклянный интерфейс.' },
-                    { icon: "fa-brands fa-osi", title: 'Open Source', desc: 'Полностью прозрачно и управляемо сообществом. Вносите вклад, изменяйте и учитесь на кодовой базе.' }
+                    { icon: "fa-solid fa-users", title: 'Сообщество', desc: 'Живое комьюнити игроков в Discord: делитесь настройками, предлагайте идеи и получайте помощь от других.' }
                 ]
             },
             EN: {
@@ -248,7 +247,6 @@
                 hero_subtitle: "The next generation DDNet client.",
                 hero_desc: "Experience unparalleled performance, stunning visuals, and a meticulously crafted interface designed for the future.",
                 btn_download: "Download Now",
-                btn_github: "View on GitHub",
                 btn_support: "Support",
                 features_tag: "Features",
                 features_title: "Built for perfection.",
@@ -279,7 +277,7 @@
                     { icon: "fa-solid fa-palette", title: 'Customization', desc: 'Tailor every aspect of the client. From themes to keybinds, make Mio truly yours down to the pixel.' },
                     { icon: "fa-solid fa-fire", title: 'Performance', desc: 'Highly optimized codebase ensuring maximum FPS and minimal memory footprint, even on older machines.' },
                     { icon: "fa-solid fa-gear", title: 'Modern UI', desc: 'Built with a futuristic design language, offering a sleek, glassmorphic experience that feels premium.' },
-                    { icon: "fa-brands fa-osi", title: 'Open Source', desc: 'Fully transparent and community-driven. Contribute, modify, and learn from a codebase built for the future.' }
+                    { icon: "fa-solid fa-users", title: 'Community', desc: 'A living player community on Discord: share your configs, suggest ideas, and get help from other players.' }
                 ]
             }
         };
@@ -566,8 +564,7 @@
                             </div>
                             <div className="flex items-center gap-3 md:gap-4 whitespace-nowrap">
                                 <a href="https://t.me/ddnetsam" target="_blank" rel="noopener" aria-label="Telegram" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-telegram"></i></a>
-                                <a href="#" target="_blank" rel="noopener" aria-label="Discord" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-discord"></i></a>
-                                <a href="#" target="_blank" rel="noopener" aria-label="GitHub" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-github"></i></a>
+                                <a href="https://discord.gg/CVydaKpS8H" target="_blank" rel="noopener" aria-label="Discord" className="text-gray-400 hover:text-white transition-colors text-lg"><i className="fa-brands fa-discord"></i></a>
                             </div>
                         </div>
                     </motion.nav>
@@ -645,7 +642,6 @@
                             <p className="text-gray-500 max-w-xl mx-auto mb-10 font-light text-lg">{t.hero_desc}</p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <a href="#download" className="glow-primary relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-mio-primary to-mio-secondary text-white font-semibold transition-all duration-300 hover:scale-105"><i className="fa-solid fa-download"></i> {t.btn_download}</a>
-                                <a href="#" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/60 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-brands fa-github"></i> {t.btn_github}</a>
                                 <a href="https://dalink.to/samporter" target="_blank" rel="noopener" className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-mio-card/60 border border-mio-border backdrop-blur-sm text-white font-semibold transition-all duration-300 hover:scale-105 hover:border-white/30"><i className="fa-solid fa-heart text-mio-secondary"></i> {t.btn_support}</a>
                             </div>
                         </motion.div>
@@ -734,8 +730,7 @@
                             </div>
                             <div className="flex items-center gap-8 text-2xl text-gray-400">
                                 <a href="https://t.me/ddnetsam" target="_blank" rel="noopener" aria-label="Telegram" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-telegram"></i></a>
-                                <a href="#" target="_blank" rel="noopener" aria-label="Discord" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-discord"></i></a>
-                                <a href="#" target="_blank" rel="noopener" aria-label="GitHub" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-github"></i></a>
+                                <a href="https://discord.gg/CVydaKpS8H" target="_blank" rel="noopener" aria-label="Discord" className="hover:text-mio-primary transition-colors"><i className="fa-brands fa-discord"></i></a>
                                 <a href="https://dalink.to/samporter" target="_blank" rel="noopener" aria-label="Support" className="hover:text-mio-secondary transition-colors"><i className="fa-solid fa-heart"></i></a>
                             </div>
                             <div className="text-center md:text-right">
