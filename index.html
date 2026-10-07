@@ -346,11 +346,57 @@
             }
         };
 
-        const DOWNLOADS = {
-            Windows: './downloads/Win-MioClient.zip',
+        const RELEASES_REPO = 'geargg44-stack/Mio-Client-Website';
+
+        const RELEASE_TITLES = {
+            Windows: 'Mio Client v1.0.0',
+            Linux:   'Mio Client linux v1.0.0',
+        };
+
+        const ASSET_MATCH = {
+            Windows: /\.(zip|exe|msi)$/i,
+            Linux:   /\.(zip|tar\.gz|tgz|AppImage|deb)$/i,
+        };
+
+        const STATIC_DOWNLOADS = {
             macOS: './downloads/Mac-MioClient.zip',
-            Linux: './downloads/Linux-MioClient.zip',
             Android: '#',
+        };
+
+        const RELEASES_PAGE = `https://github.com/${RELEASES_REPO}/releases`;
+
+        const useReleases = () => {
+            const [links, setLinks] = useState({});
+
+            useEffect(() => {
+                let cancelled = false;
+                (async () => {
+                    try {
+                        const res = await fetch(`https://api.github.com/repos/${RELEASES_REPO}/releases?per_page=100`, {
+                            headers: { Accept: 'application/vnd.github+json' },
+                        });
+                        if (!res.ok) throw new Error(res.status);
+                        const releases = await res.json();
+
+                        const out = {};
+                        for (const os of Object.keys(RELEASE_TITLES)) {
+                            const wanted = RELEASE_TITLES[os].trim().toLowerCase();
+                            const rel = releases.find(
+                                (r) => !r.draft && (r.name || '').trim().toLowerCase() === wanted
+                            );
+                            if (!rel) continue;
+                            const asset = rel.assets.find((a) => ASSET_MATCH[os].test(a.name)) || rel.assets[0];
+                            if (asset) out[os] = { url: asset.browser_download_url, size: asset.size };
+                        }
+                        if (!cancelled) setLinks(out);
+                    } catch (e) {
+                        console.warn('Не удалось загрузить релизы:', e);
+                    }
+                })();
+                return () => { cancelled = true; };
+            }, []);
+
+            return { links };
         };
 
         /* ---------- Декор ---------- */
@@ -586,6 +632,12 @@
             });
             const t = translations[lang];
             const hw = theme === 'halloween';
+            const { links: releaseLinks } = useReleases();
+            const getDownloadUrl = (os) => {
+                if (releaseLinks[os]) return releaseLinks[os].url;
+                if (STATIC_DOWNLOADS[os]) return STATIC_DOWNLOADS[os];
+                return RELEASES_PAGE;
+            };
 
             useEffect(() => {
                 document.documentElement.dataset.theme = theme;
@@ -909,7 +961,7 @@
                                                     <p key={i} className="flex items-center gap-3 text-sm"><i className="fa-solid fa-check text-mio-primary text-xs"></i> {f}</p>
                                                 ))}
                                             </div>
-                                            <a href={DOWNLOADS[userOS]} onClick={handleFreeDownload} className="w-full glass glass-hover inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-white font-semibold text-sm">
+                                            <a href={getDownloadUrl(userOS)} onClick={handleFreeDownload} className="w-full glass glass-hover inline-flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-white font-semibold text-sm">
                                                 <i className={`fa-brands ${getOSIcon(userOS)} text-xs`}></i> {t.modal_free_btn} {userOS}
                                             </a>
                                         </div>
