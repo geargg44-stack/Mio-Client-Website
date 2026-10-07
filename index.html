@@ -223,7 +223,7 @@
                 faq_q1: "Безопасно ли использовать Mio Client?",
                 faq_a1: "Да, абсолютно безопасно. Мы не собираем ваши данные.",
                 faq_q2: "Какие системные требования у клиента?",
-                faq_a2: "Mio Client невероятно легковесен и оптимизирован. Он без проблем запускается на Windows 7, macOS 10.13+ и современных дистрибутивах Linux. Для игры достаточно 2 ГБ оперативной памяти и любого процессора последних 10 лет.",
+                faq_a2: "Mio Client невероятно легковесен и оптимизирован. Он без проблем запускается на Windows 7 и современных дистрибутивах Linux. Для игры достаточно 2 ГБ оперативной памяти и любого процессора последних 10 лет.",
                 faq_q3: "Как устанавливать и обновлять клиент?",
                 faq_a3: "Просто скачайте архив для вашей операционной системы, распакуйте его в любую папку и запустите исполняемый файл. Обновления выходят автоматически или проверяются при запуске.",
                 faq_q4: "Будут ли добавлены новые функции?",
@@ -233,8 +233,8 @@
                 perf_desc: "Создан с нуля, чтобы ваша игра работала плавнее, чем когда-либо.",
                 stat1_label: "Кадров в секунду",
                 stat1_desc: "Невероятно плавный рендеринг",
-                stat2_label: "Использование памяти",
-                stat2_desc: "Невероятно легкий",
+                stat2_label: "Платформы",
+                stat2_desc: "Windows и Linux",
                 stat3_label: "Скорость запуска",
                 stat3_desc: "Мгновенный запуск",
                 download_title: "Готовы играть?",
@@ -242,7 +242,7 @@
                 download_desc_h: "Скачайте Mio Client сегодня — никаких подвохов, только угощение.",
                 download_for: "Скачать для",
                 download_wrong: "Не та ОС? Выберите вашу платформу:",
-                download_latest: "Последняя версия: 1.0.0 • 45.2 MB",
+                download_latest: "Последняя версия: 1.0.0",
                 modal_free_title: "Free Plan",
                 modal_free_price: "0 ₽",
                 modal_free_f1: "Базовая версия",
@@ -259,6 +259,7 @@
                 modal_premium_btn: "Купить Premium",
                 modal_premium_out: "К сожалению, Premium-версия пока нет в наличии.",
                 modal_android_msg: "Для Android версии пока нет, но возможно будет в будущем!",
+                modal_mac_msg: "Для macOS версии пока нет, но возможно будет в будущем!",
                 footer_copy: "© 2026 Mio Client. Все права защищены.",
                 footer_h: "Trick or treat? Скачай клиент — получишь угощение.",
                 theme_h: "Хэллоуин",
@@ -295,7 +296,7 @@
                 faq_q1: "Is it safe to use Mio Client?",
                 faq_a1: "Yes, it is absolutely safe. We do not collect your data.",
                 faq_q2: "What are the system requirements?",
-                faq_a2: "Mio Client is incredibly lightweight and optimized. It runs smoothly on Windows 7, macOS 10.13+, and modern Linux distributions. You only need 2GB of RAM and any CPU from the last 10 years to play.",
+                faq_a2: "Mio Client is incredibly lightweight and optimized. It runs smoothly on Windows 7 and modern Linux distributions. You only need 2GB of RAM and any CPU from the last 10 years to play.",
                 faq_q3: "How to install and update the client?",
                 faq_a3: "Just download the archive for your OS, extract it to any folder, and run the executable file. Updates are released automatically or checked at startup.",
                 faq_q4: "Will new features be added?",
@@ -305,8 +306,8 @@
                 perf_desc: "Engineered from the ground up to ensure your game runs smoother than ever before.",
                 stat1_label: "Frames Per Second",
                 stat1_desc: "Buttery smooth rendering",
-                stat2_label: "Memory Usage",
-                stat2_desc: "Incredibly lightweight",
+                stat2_label: "Platforms",
+                stat2_desc: "Windows & Linux",
                 stat3_label: "Startup Speed",
                 stat3_desc: "Instantaneous launch",
                 download_title: "Ready to play?",
@@ -314,7 +315,7 @@
                 download_desc_h: "Download Mio Client today — no tricks, just treats.",
                 download_for: "Download for",
                 download_wrong: "Wrong OS? Choose your platform:",
-                download_latest: "Latest Version: 1.0.0 • 45.2 MB",
+                download_latest: "Latest Version: 1.0.0",
                 modal_free_title: "Free Plan",
                 modal_free_price: "0 ₽",
                 modal_free_f1: "Base version",
@@ -331,6 +332,7 @@
                 modal_premium_btn: "Buy Premium",
                 modal_premium_out: "Unfortunately, the Premium version is out of stock.",
                 modal_android_msg: "The Android version is not available yet, but might be in the future!",
+                modal_mac_msg: "The macOS version is not available yet, but might be in the future!",
                 footer_copy: "© 2026 Mio Client. All rights reserved.",
                 footer_h: "Trick or treat? Grab the client — get the treat.",
                 theme_h: "Halloween",
@@ -358,8 +360,11 @@
             Linux:   /\.(zip|tar\.gz|tgz|AppImage|deb)$/i,
         };
 
+        // Платформы, для которых версии пока нет
+        const UNAVAILABLE_OS = ['Android', 'macOS'];
+
         const STATIC_DOWNLOADS = {
-            macOS: './downloads/Mac-MioClient.zip',
+            macOS: '#',
             Android: '#',
         };
 
@@ -625,7 +630,7 @@
             const [lang, setLang] = useState('EN');
             const [showPricing, setShowPricing] = useState(false);
             const [premiumSoldOut, setPremiumSoldOut] = useState(false);
-            const [showAndroidMsg, setShowAndroidMsg] = useState(false);
+            const [showUnavailMsg, setShowUnavailMsg] = useState(false);
             const [activeFaq, setActiveFaq] = useState(null);
             const [theme, setTheme] = useState(() => {
                 try { return localStorage.getItem('mio-theme') || 'halloween'; } catch (e) { return 'halloween'; }
@@ -633,6 +638,7 @@
             const t = translations[lang];
             const hw = theme === 'halloween';
             const { links: releaseLinks } = useReleases();
+            const isUnavailable = UNAVAILABLE_OS.includes(userOS);
             const getDownloadUrl = (os) => {
                 if (releaseLinks[os]) return releaseLinks[os].url;
                 if (STATIC_DOWNLOADS[os]) return STATIC_DOWNLOADS[os];
@@ -693,19 +699,21 @@
 
             const showCountdown = daysLeft >= 0 && daysLeft <= 60;
 
+            const unavailMsg = userOS === 'macOS' ? t.modal_mac_msg : t.modal_android_msg;
+
             const openDownload = (os) => {
                 if (os) setUserOS(os);
                 setPremiumSoldOut(false);
-                setShowAndroidMsg(false);
+                setShowUnavailMsg(false);
                 setShowPricing(true);
             };
-            const closeModal = () => { setShowPricing(false); setPremiumSoldOut(false); setShowAndroidMsg(false); };
+            const closeModal = () => { setShowPricing(false); setPremiumSoldOut(false); setShowUnavailMsg(false); };
             const handleFreeDownload = (e) => {
-                if (userOS === 'Android') { e.preventDefault(); setPremiumSoldOut(false); setShowAndroidMsg(true); }
+                if (isUnavailable) { e.preventDefault(); setPremiumSoldOut(false); setShowUnavailMsg(true); }
             };
             const handlePremiumClick = () => {
-                if (userOS === 'Android') { setShowAndroidMsg(true); setPremiumSoldOut(false); }
-                else { setPremiumSoldOut(true); setShowAndroidMsg(false); }
+                if (isUnavailable) { setShowUnavailMsg(true); setPremiumSoldOut(false); }
+                else { setPremiumSoldOut(true); setShowUnavailMsg(false); }
             };
             useEffect(() => {
                 if (!showPricing) return;
@@ -863,7 +871,7 @@
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {[
                                     { value: 360, suffix: '+', label: t.stat1_label, desc: t.stat1_desc, icon: 'fa-bolt' },
-                                    { value: 45, suffix: 'MB', label: t.stat2_label, desc: t.stat2_desc, icon: 'fa-feather' },
+                                    { value: 2, suffix: '', label: t.stat2_label, desc: t.stat2_desc, icon: 'fa-desktop' },
                                     { value: 0.8, suffix: 's', label: t.stat3_label, desc: t.stat3_desc, decimals: 1, icon: 'fa-hourglass-half' }
                                 ].map((stat, i) => (
                                     <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }} className="relative p-10 rounded-2xl border border-mio-border bg-mio-card/70 backdrop-blur-sm text-center overflow-hidden">
@@ -984,9 +992,9 @@
                                     </div>
 
                                     <AnimatePresence>
-                                        {(premiumSoldOut || showAndroidMsg) && (
+                                        {(premiumSoldOut || showUnavailMsg) && (
                                             <motion.div key="msg" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden w-full">
-                                                <p className="text-mio-primary text-sm text-center font-medium tracking-wide">{showAndroidMsg ? t.modal_android_msg : t.modal_premium_out}</p>
+                                                <p className="text-mio-primary text-sm text-center font-medium tracking-wide">{showUnavailMsg ? unavailMsg : t.modal_premium_out}</p>
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
